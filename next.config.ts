@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ["cheerio"],
 };
 
 export default nextConfig;
