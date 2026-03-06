@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import TierBadge from "@/components/ui/TierBadge";
+import { useMapContext } from "@/lib/map-context";
 import type { AnalysisScores, Tier, Quadrant, EntityType } from "@/lib/types";
 import { QUADRANT_LABELS } from "@/lib/types";
 
@@ -28,6 +29,24 @@ interface ReportCardProps {
 }
 
 export default function ReportCard({ result, analysisId }: ReportCardProps) {
+  const { setPendingMapProject } = useMapContext();
+
+  const isAligned = result.tier === "tier_1" || result.tier === "tier_2" || result.tier === "tier_3";
+
+  const handleAddToMap = () => {
+    setPendingMapProject({
+      name: result.entityName,
+      oneLiner: result.oneLiner,
+      quadrant: result.quadrant,
+      sector: "",
+      scores: result.scores,
+    });
+    const mapSection = document.getElementById("map");
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const total =
     result.scores.defensive +
     result.scores.decentralization +
@@ -167,6 +186,18 @@ export default function ReportCard({ result, analysisId }: ReportCardProps) {
           </div>
         )}
       </div>
+
+      {/* Add to map CTA */}
+      {isAligned && (
+        <div className="px-6 pb-4">
+          <button
+            onClick={handleAddToMap}
+            className="btn-primary w-full"
+          >
+            ADD TO d/acc MAP
+          </button>
+        </div>
+      )}
 
       {/* Share bar */}
       {analysisId && (

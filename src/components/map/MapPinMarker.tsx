@@ -1,0 +1,102 @@
+"use client";
+
+import { QUADRANT_COLORS } from "@/lib/types";
+import type { Quadrant } from "@/lib/types";
+
+export interface MapPin {
+  id: string;
+  name: string;
+  organization?: string;
+  one_liner?: string;
+  quadrant: Quadrant;
+  sector: string;
+  image_url?: string;
+  website_url?: string;
+  tier?: string;
+  x: number;
+  y: number;
+  source?: string;
+}
+
+interface MapPinMarkerProps {
+  pin: MapPin;
+  onClick: (pin: MapPin) => void;
+  isSelected: boolean;
+}
+
+export default function MapPinMarker({ pin, onClick, isSelected }: MapPinMarkerProps) {
+  const color = QUADRANT_COLORS[pin.quadrant] || "#00FF88";
+  const size = isSelected ? 16 : 10;
+
+  return (
+    <g
+      className="cursor-pointer"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(pin);
+      }}
+    >
+      {/* Glow ring */}
+      <circle
+        cx={pin.x}
+        cy={pin.y}
+        r={size + 4}
+        fill="none"
+        stroke={color}
+        strokeWidth={1}
+        opacity={isSelected ? 0.6 : 0.2}
+      />
+      {/* Pin circle */}
+      <circle
+        cx={pin.x}
+        cy={pin.y}
+        r={size}
+        fill={`${color}30`}
+        stroke={color}
+        strokeWidth={2}
+      />
+      {/* Avatar or initial */}
+      {pin.image_url ? (
+        <>
+          <defs>
+            <clipPath id={`clip-${pin.id}`}>
+              <circle cx={pin.x} cy={pin.y} r={size - 2} />
+            </clipPath>
+          </defs>
+          <image
+            href={pin.image_url}
+            x={pin.x - size + 2}
+            y={pin.y - size + 2}
+            width={(size - 2) * 2}
+            height={(size - 2) * 2}
+            clipPath={`url(#clip-${pin.id})`}
+          />
+        </>
+      ) : (
+        <text
+          x={pin.x}
+          y={pin.y + 3}
+          textAnchor="middle"
+          fill={color}
+          fontSize={size * 0.8}
+          fontFamily="JetBrains Mono, monospace"
+          fontWeight="bold"
+        >
+          {pin.name.charAt(0)}
+        </text>
+      )}
+      {/* Label */}
+      <text
+        x={pin.x}
+        y={pin.y + size + 14}
+        textAnchor="middle"
+        fill="#E0E0E0"
+        fontSize={9}
+        fontFamily="JetBrains Mono, monospace"
+        opacity={isSelected ? 1 : 0.7}
+      >
+        {pin.name.length > 15 ? pin.name.slice(0, 14) + "…" : pin.name}
+      </text>
+    </g>
+  );
+}

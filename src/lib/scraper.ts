@@ -8,6 +8,12 @@ interface ScrapedContent {
   description: string;
   content: string;
   source: "github" | "web" | "text";
+  logoUrl?: string;
+}
+
+export interface ScrapeResult {
+  content: string;
+  logoUrl?: string;
 }
 
 export async function scrapeUrl(url: string): Promise<string> {
@@ -110,6 +116,82 @@ async function scrapeWeb(url: string): Promise<string> {
   parts.push(scraped.content);
 
   return sanitizeContent(parts.join("\n"));
+}
+
+export async function scrapeUrlWithLogo(url: string): Promise<ScrapeResult> {
+  try {
+    if (url.includes("github.com")) {
+      const content = await scrapeGitHub(url);
+      return { content, logoUrl: undefined };
+    }
+
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT),
+      headers: {
+        "User-Agent": "WTFisDACCBot/1.0 (educational project analyzer)",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // Extract logo/favicon
+    const logoUrl =
+      $('link[rel="apple-touch-icon"]').attr("href") ||
+      $('link[rel="icon"][type="image/png"]').attr("href") ||
+      $('link[rel="icon"]').attr("href") ||
+      $('meta[property="og:image"]').attr("content") ||
+      undefined;
+
+    // Resolve relative URLs
+    let resolvedLogo = logoUrl;
+    if (logoUrl && !logoUrl.startsWith("http")) {
+      try {
+        resolvedLogo = new URL(logoUrl, url).toString();
+      } catch {
+        resolvedLogo = undefined;
+      }
+    }
+
+    // Remove unwanted elements
+    $("script, style, nav, footer, header, iframe, noscript").remove();
+
+    const scraped: ScrapedContent = {
+      title: $("title").text().trim() || $('meta[property="og:title"]').attr("content") || "",
+      description:
+        $('meta[name="description"]').attr("content") ||
+        $('meta[property="og:description"]').attr("content") ||
+        "",
+      content: "",
+      source: "web",
+      logoUrl: resolvedLogo,
+    };
+
+    const mainContent =
+      $("main").text() || $("article").text() || $('[role="main"]').text() || $("body").text();
+
+    scraped.content = mainContent.trim();
+
+    const parts = [];
+    if (scraped.title) parts.push(`Title: ${scraped.title}`);
+    if (scraped.description) parts.push(`Description: ${scraped.description}`);
+    parts.push("\n--- Page Content ---\n");
+    parts.push(scraped.content);
+
+    return {
+      content: sanitizeContent(parts.join("\n")),
+      logoUrl: resolvedLogo,
+    };
+  } catch (error) {
+    console.error("Scraping error:", error);
+    throw new Error(
+      `Could not extract content from URL. Error: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 }
 
 function sanitizeContent(content: string): string {

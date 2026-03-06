@@ -37,21 +37,19 @@ export default function MatrixRain({ className = "" }: MatrixRainProps) {
     window.addEventListener("resize", resize);
 
     const fontSize = 14;
-    const columns = Math.floor(canvas.offsetWidth / (fontSize * 1.5));
+    const columns = Math.floor(canvas.offsetWidth / (fontSize * 2.5));
     const drops: number[] = Array(columns).fill(0).map(() => Math.random() * -50);
-    const speeds: number[] = Array(columns).fill(0).map(() => 0.3 + Math.random() * 0.7);
-
-    const isMobile = window.innerWidth < 640;
+    const speeds: number[] = Array(columns).fill(0).map(() => 0.08 + Math.random() * 0.2);
 
     const draw = () => {
       frameCount++;
-      // 30fps on mobile (skip every other frame)
-      if (isMobile && frameCount % 2 !== 0) {
+      // 30fps everywhere (skip every other frame)
+      if (frameCount % 2 !== 0) {
         animationId = requestAnimationFrame(draw);
         return;
       }
 
-      ctx.fillStyle = "rgba(15, 15, 35, 0.08)";
+      ctx.fillStyle = "rgba(15, 15, 35, 0.03)";
       ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 
       ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
@@ -70,11 +68,11 @@ export default function MatrixRain({ className = "" }: MatrixRainProps) {
           ctx.fillStyle = `rgba(0, 255, 136, ${alpha * 0.4})`;
         }
 
-        ctx.fillText(char, i * fontSize * 1.5, y);
+        ctx.fillText(char, i * fontSize * 2.5, y);
 
         drops[i] += speeds[i];
 
-        if (y > canvas.offsetHeight && Math.random() > 0.98) {
+        if (y > canvas.offsetHeight && Math.random() > 0.995) {
           drops[i] = 0;
         }
       }

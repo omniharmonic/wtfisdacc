@@ -1,6 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const AuthoritarianGraph = dynamic(
+  () => import("@/components/ui/AuthoritarianGraph"),
+  { ssr: false }
+);
 
 const fadeInUp = {
   initial: { opacity: 0, y: 40 },
@@ -34,6 +41,219 @@ function SectionTag({ children }: { children: string }) {
   );
 }
 
+const FOUR_DS = [
+  {
+    letter: "D",
+    word: "efensive",
+    question: "Does this make it easier to defend against harm than to cause harm?",
+    color: "#00FF88",
+    explanation:
+      "Technologies that shift the offense/defense balance toward protection rather than attack. The core d/acc insight: we should accelerate technologies where defense has a structural advantage.",
+    qualities: [
+      "Shifts offense/defense balance toward defense",
+      "Enables defense without centralized authority",
+      "Resilient to single points of failure",
+      "Protection improves faster than attack capability",
+    ],
+    greenFlags: [
+      "ZK proofs enabling verification without exposure",
+      "Social recovery wallets protecting against key loss",
+      "Far-UVC light that kills pathogens universally",
+    ],
+    redFlags: [
+      "Creates new attack surfaces",
+      "Enables cheaper harm than protection",
+      "Facilitates surveillance infrastructure",
+    ],
+  },
+  {
+    letter: "D",
+    word: "ecentralized",
+    question: "Can this operate without requiring trust that centralized actors will remain benevolent?",
+    color: "#00D4FF",
+    explanation:
+      "Technologies that can operate without a single controlling entity or trusted third party. The key test: would this still work if the current operators became adversarial?",
+    qualities: [
+      "Control distributed across many actors",
+      "Resistant to capture by any single entity",
+      "Open-source codebase and transparent operation",
+      "No centralized upgrade authority or kill switch",
+    ],
+    greenFlags: [
+      "Bitcoin's permissionless consensus",
+      "IPFS content addressing",
+      "Ethereum's 800K+ validator set",
+    ],
+    redFlags: [
+      "Requires trust in 'good guys' staying good",
+      "Single points of failure",
+      "Centralized upgrade authority",
+    ],
+  },
+  {
+    letter: "D",
+    word: "emocratic",
+    question: "Does this enable more people to participate meaningfully in governance and coordination?",
+    color: "#FFD93D",
+    explanation:
+      "Technologies that enable broader participation in decisions and resist capture by small groups. Not majority-rule voting, but mechanisms that surface genuine community preferences.",
+    qualities: [
+      "Empowers individuals over institutions",
+      "Enables coordination without coercion",
+      "Preserves user sovereignty",
+      "Resists plutocratic capture",
+    ],
+    greenFlags: [
+      "Quadratic voting reducing whale dominance",
+      "Community Notes finding cross-partisan consensus",
+      "Retroactive public goods funding",
+    ],
+    redFlags: [
+      "Concentrates capability in small groups",
+      "Creates plutocratic dynamics (pay-to-play)",
+      "Excludes participation based on resources",
+    ],
+  },
+  {
+    letter: "D",
+    word: "ifferential",
+    question: "Does this make defense grow faster than offense over time?",
+    color: "#00CED1",
+    explanation:
+      "Technologies that accelerate defense capabilities faster than offense capabilities. The 'd' in d/acc — not all acceleration is equal; what matters is the differential between defensive and offensive uses.",
+    qualities: [
+      "Defense benefits more from improvements than offense",
+      "Creates compounding defensive advantages",
+      "Reduces the cost of protection faster than the cost of attack",
+      "Viable path to mainstream adoption",
+    ],
+    greenFlags: [
+      "Far-UVC (kills pathogens universally without targeting)",
+      "Air filtering (pure defense, no offensive use)",
+      "Encryption (asymmetric advantage for defenders)",
+    ],
+    redFlags: [
+      "Equally useful for harmful applications",
+      "Offense benefits more from improvements",
+      "Creates arms race dynamics",
+    ],
+  },
+];
+
+function FourDsSection() {
+  const [expanded, setExpanded] = useState<number | null>(null);
+
+  return (
+    <Section className="border-t border-dacc-green/10">
+      <SectionTag>// The Four D&apos;s Test</SectionTag>
+      <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+        The diagnostic checklist.
+      </h2>
+      <div className="space-y-4 mt-8">
+        {FOUR_DS.map((d, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1, duration: 0.4 }}
+            className="border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors cursor-pointer"
+            style={{ borderColor: expanded === i ? `${d.color}40` : "var(--color-dacc-surface)" }}
+            onClick={() => setExpanded(expanded === i ? null : i)}
+          >
+            <div className="flex items-start gap-4 p-4">
+              <span
+                className="font-mono text-2xl font-bold shrink-0"
+                style={{ color: d.color }}
+              >
+                {d.letter}
+              </span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div className="font-mono text-sm text-dacc-text">
+                    <span style={{ color: d.color }}>{d.letter}</span>
+                    {d.word}
+                  </div>
+                  <span
+                    className="font-mono text-lg transition-transform shrink-0"
+                    style={{
+                      color: d.color,
+                      transform: expanded === i ? "rotate(45deg)" : "rotate(0)",
+                    }}
+                  >
+                    +
+                  </span>
+                </div>
+                <div className="font-sans text-sm text-dacc-muted mt-1">
+                  {d.question}
+                </div>
+              </div>
+            </div>
+
+            <AnimatePresence>
+              {expanded === i && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4 space-y-4 border-t border-dacc-surface ml-10">
+                    <p className="font-sans text-sm text-dacc-muted pt-4">
+                      {d.explanation}
+                    </p>
+
+                    <div>
+                      <div className="font-mono text-xs text-dacc-text mb-2">
+                        KEY QUALITIES
+                      </div>
+                      <ul className="space-y-1">
+                        {d.qualities.map((q, j) => (
+                          <li key={j} className="font-sans text-xs text-dacc-muted flex gap-2">
+                            <span style={{ color: d.color }}>•</span> {q}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3 border border-dacc-green/20 bg-dacc-bg/50">
+                        <div className="font-mono text-xs text-dacc-green mb-2">
+                          PASSES
+                        </div>
+                        <ul className="space-y-1">
+                          {d.greenFlags.map((f, j) => (
+                            <li key={j} className="font-sans text-xs text-dacc-muted flex gap-2">
+                              <span className="text-dacc-green shrink-0">+</span> {f}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="p-3 border border-dacc-red/20 bg-dacc-bg/50">
+                        <div className="font-mono text-xs text-dacc-red mb-2">
+                          FAILS
+                        </div>
+                        <ul className="space-y-1">
+                          {d.redFlags.map((f, j) => (
+                            <li key={j} className="font-sans text-xs text-dacc-muted flex gap-2">
+                              <span className="text-dacc-red shrink-0">-</span> {f}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 export default function Explainer() {
   return (
     <section id="explainer" className="relative">
@@ -64,43 +284,8 @@ export default function Explainer() {
           </p>
         </div>
 
-        {/* Fork diagram */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-12 p-6 border border-dacc-green/20 bg-dacc-surface/50"
-        >
-          <div className="font-mono text-sm text-center">
-            <div className="text-dacc-text mb-4">TECH ACCELERATION</div>
-            <div className="text-dacc-muted mb-2">│</div>
-            <div className="flex justify-center gap-12 sm:gap-24">
-              <div className="text-center">
-                <div className="text-dacc-red mb-2">╱</div>
-                <div className="text-dacc-red font-bold">OFFENSE</div>
-                <div className="text-dacc-muted text-xs mt-1">
-                  Surveillance
-                  <br />
-                  Centralization
-                  <br />
-                  Control
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-dacc-green mb-2">╲</div>
-                <div className="text-dacc-green font-bold">DEFENSE</div>
-                <div className="text-dacc-muted text-xs mt-1">
-                  Privacy
-                  <br />
-                  Decentralization
-                  <br />
-                  Resilience
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Animated divergence graph */}
+        <AuthoritarianGraph />
       </Section>
 
       {/* Section B: The Axes */}
@@ -205,65 +390,7 @@ export default function Explainer() {
       </Section>
 
       {/* Section D: The Four D's */}
-      <Section className="border-t border-dacc-green/10">
-        <SectionTag>// The Four D&apos;s Test</SectionTag>
-        <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
-          The diagnostic checklist.
-        </h2>
-        <div className="space-y-4 mt-8">
-          {[
-            {
-              letter: "D",
-              word: "ecentralized",
-              question: "Is control distributed? Can any single entity capture it?",
-              color: "#00FF88",
-            },
-            {
-              letter: "D",
-              word: "emocratic",
-              question: "Does it empower individuals? Does it enable coordination without coercion?",
-              color: "#00D4FF",
-            },
-            {
-              letter: "D",
-              word: "ifferential",
-              question: "Does it favor defense over offense? Does it shift the balance?",
-              color: "#FFD93D",
-            },
-            {
-              letter: "D",
-              word: "efensive",
-              question: "Is it resilient? Can it survive adversarial conditions?",
-              color: "#00CED1",
-            },
-          ].map((d, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="flex items-start gap-4 p-4 border border-dacc-surface bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors"
-            >
-              <span
-                className="font-mono text-2xl font-bold shrink-0"
-                style={{ color: d.color }}
-              >
-                {d.letter}
-              </span>
-              <div>
-                <div className="font-mono text-sm text-dacc-text">
-                  <span style={{ color: d.color }}>{d.letter}</span>
-                  {d.word}
-                </div>
-                <div className="font-sans text-sm text-dacc-muted mt-1">
-                  {d.question}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </Section>
+      <FourDsSection />
 
       {/* Section E: The Scoring */}
       <Section className="border-t border-dacc-green/10">

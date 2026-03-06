@@ -5,8 +5,9 @@ import { useState, useEffect } from "react";
 const NAV_ITEMS = [
   { id: "hero", label: "home" },
   { id: "explainer", label: "framework" },
+  { id: "research", label: "research" },
   { id: "analyzer", label: "analyzer" },
-  { id: "quadrant", label: "map" },
+  { id: "map", label: "map" },
 ];
 
 export default function Nav() {

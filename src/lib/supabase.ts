@@ -8,12 +8,16 @@ export function getServiceClient() {
   return createClient(url, key);
 }
 
-// Client-side client (anon key, read-only via RLS)
+// Client-side singleton (anon key, read-only via RLS)
+let anonClient: ReturnType<typeof createClient> | null = null;
+
 export function getAnonClient() {
+  if (anonClient) return anonClient;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
-  return createClient(url, key);
+  anonClient = createClient(url, key);
+  return anonClient;
 }
 
 export async function checkCache(urlHash: string) {

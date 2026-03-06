@@ -47,24 +47,24 @@ export default function Analyzer() {
 
   const isStreaming = status === "streaming" || status === "submitted";
 
-  // Extract tool results from messages
+  // Extract tool results from messages (AI SDK v6 format)
   useEffect(() => {
     for (const msg of messages) {
       if (msg.parts) {
         for (const part of msg.parts) {
-          if (part.type === "tool-invocation") {
-            const invocation = part as unknown as {
-              type: "tool-invocation";
-              toolInvocation: {
-                state: string;
-                result?: ToolCallResult;
-                args?: ToolCallResult;
-              };
+          // AI SDK v6: tool parts are typed as "tool-{toolName}"
+          if (part.type === "tool-score_project") {
+            const toolPart = part as unknown as {
+              type: string;
+              state: string;
+              input?: ToolCallResult;
+              output?: ToolCallResult;
             };
-            if (invocation.toolInvocation?.state === "result" && invocation.toolInvocation.result) {
-              setToolResult(invocation.toolInvocation.result);
-            } else if (invocation.toolInvocation?.args) {
-              setToolResult(invocation.toolInvocation.args);
+            if (toolPart.state === "output-available" && toolPart.output) {
+              setToolResult(toolPart.output);
+            } else if (toolPart.state === "input-available" && toolPart.input) {
+              // Tool was called but no execute fn — use input as result
+              setToolResult(toolPart.input);
             }
           }
         }
@@ -86,11 +86,15 @@ export default function Analyzer() {
     setToolResult(null);
 
     if (textFallback && textInput.trim()) {
-      sendMessage({
-        text: textInput,
-      }, {
-        body: { textInput: textInput.trim(), url: null },
-      });
+      try {
+        await sendMessage({
+          text: textInput,
+        }, {
+          body: { textInput: textInput.trim(), url: null },
+        });
+      } catch (err) {
+        setErrorMessage(err instanceof Error ? err.message : "Analysis failed");
+      }
       return;
     }
 
@@ -102,33 +106,25 @@ export default function Analyzer() {
       return;
     }
 
-    // Check for cached response first
+    // Pre-check: cache and rate limit (HEAD-like check to avoid double analysis)
     try {
-      const res = await fetch("/api/analyze", {
+      const res = await fetch("/api/analyze/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
 
-      if (res.status === 429) {
+      if (res.ok) {
         const data = await res.json();
-        setErrorMessage(data.error);
-        return;
-      }
-
-      if (res.status === 422) {
-        const data = await res.json();
+        if (data.rateLimited) {
+          setErrorMessage(data.error);
+          return;
+        }
         if (data.needsTextInput) {
           setTextFallback(true);
           setErrorMessage(data.error);
           return;
         }
-      }
-
-      // If it's a cached response (JSON), handle it
-      const contentType = res.headers.get("content-type");
-      if (contentType?.includes("application/json")) {
-        const data = await res.json();
         if (data.cached && data.analysis) {
           setToolResult({
             entityName: data.analysis.entity_name,
@@ -151,21 +147,27 @@ export default function Analyzer() {
           setAnalysisComplete(true);
           return;
         }
-        if (data.error) {
-          setErrorMessage(data.error);
-          return;
-        }
       }
     } catch {
-      // If fetch fails, fall through to streaming
+      // If check fails, proceed to streaming anyway
     }
 
     // Start streaming analysis
-    sendMessage({
-      text: `Analyze: ${url}`,
-    }, {
-      body: { url },
-    });
+    try {
+      await sendMessage({
+        text: `Analyze: ${url}`,
+      }, {
+        body: { url },
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Analysis failed";
+      // Try to extract error from JSON response body
+      if (msg.includes("429")) {
+        setErrorMessage("[RATE LIMIT] Too many requests. Please wait a few minutes.");
+      } else {
+        setErrorMessage(`[ERROR] ${msg}`);
+      }
+    }
   };
 
   const reset = () => {
@@ -220,7 +222,6 @@ export default function Analyzer() {
                     placeholder="paste a link >"
                     className="flex-1 bg-transparent border-none outline-none text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50"
                     disabled={isStreaming}
-                    autoFocus
                   />
                   {!isStreaming && (
                     <button
