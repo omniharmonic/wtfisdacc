@@ -1,0 +1,96 @@
+Name,Category,Description,Investment Tier,Stage,Token,Token Symbol,Key Differentiator,D/acc Score
+Varro Inc.,Biodefense & Health Systems,Biodefense technology company,Tier 2,Development/Testnet,FALSE,,Pathogen early warning systems,75
+Pathoplexus,Biodefense & Health Systems,Pathogen detection and monitoring platform,Tier 2,Development/Testnet,FALSE,,Open source pathogen surveillance,72
+OSLUV,Biodefense & Health Systems,Open source UV air purification systems,Tier 2,Mainnet,FALSE,,Decentralized air quality defense,70
+Openwater,Biodefense & Health Systems,Non-invasive medical imaging technology,Tier 2,Development/Testnet,FALSE,,Affordable medical diagnostics,68
+MediLedger,Biodefense & Health Systems,Pharmaceutical supply chain verification,Tier 2,Mainnet,FALSE,,Drug authenticity verification,72
+GrapheneOS,Open Source Hardware & Silicon,Privacy-focused mobile operating system,Tier 1,Mainnet,FALSE,,Hardened Android without Google,88
+Freedom Factory (ethOS),Open Source Hardware & Silicon,Ethereum-native mobile operating system,Tier 2,Development/Testnet,FALSE,,Web3-native mobile OS,70
+Nanographs,Open Source Hardware & Silicon,Open source semiconductor technology,Tier 3,Development/Testnet,FALSE,,Open silicon design,62
+Open Silicon Initiatives,Open Source Hardware & Silicon,Open source silicon and hardware design,Tier 3,Development/Testnet,FALSE,,RISC-V and open hardware,65
+k-scale,Resilient Manufacturing,Open source robotics and manufacturing,Tier 2,Development/Testnet,FALSE,,Democratized robotics,68
+SalvageGarden,Resilient Manufacturing,Accessible mobility and assistive technology,Tier 3,Development/Testnet,FALSE,,Open source accessibility,58
+Simula,Resilient Manufacturing,Open source VR/AR computing platform,Tier 3,Development/Testnet,FALSE,,Decentralized spatial computing,60
+Power Ledger,Decentralized Energy,Peer-to-peer energy trading platform,Tier 2,Mainnet,TRUE,POWR,Blockchain energy marketplace,72
+Energy Web Foundation,Decentralized Energy,Open-source blockchain for energy sector,Tier 2,Mainnet,TRUE,EWT,Energy sector infrastructure,70
+Georgia Land Registry,Property Rights & Registries,Government blockchain land registry,Tier 2,Mainnet,FALSE,,First national land registry on blockchain,75
+Dubai Property Platform,Property Rights & Registries,Blockchain-based property registration,Tier 2,Mainnet,FALSE,,Government-backed property chain,72
+Rwanda Cadastre,Property Rights & Registries,Decentralized land registration system,Tier 2,Development/Testnet,FALSE,,African land rights digitization,68
+RealT,Property Rights & Registries,Tokenized real estate ownership,Tier 2,Mainnet,TRUE,REALT,Fractional property ownership,70
+Toucan Protocol,Carbon & Environmental Markets,On-chain carbon credit infrastructure,Tier 2,Mainnet,TRUE,TCO2,Carbon tokenization standard,72
+KlimaDAO,Carbon & Environmental Markets,Decentralized carbon offsetting,Tier 2,Mainnet,TRUE,KLIMA,Carbon-backed treasury,68
+Verra,Carbon & Environmental Markets,Carbon credit standards (centralization concern),Tier 3,Mainnet,FALSE,,Legacy carbon registry - centralization risk,55
+Better.SG,Civic Tech,Singapore civic tech collective,Tier 3,Mainnet,FALSE,,Community-driven civic tools,60
+Edible Garden City,Civic Tech,Urban farming and food sovereignty,Tier 3,Mainnet,FALSE,,Local food resilience,58
+Soil Social,Civic Tech,Regenerative agriculture coordination,Tier 3,Development/Testnet,FALSE,,Soil health coordination,56
+Chiang Mai Maker Club,Civic Tech,Open source maker community,Tier 3,Mainnet,FALSE,,Southeast Asian maker movement,55
+Aztec Network,Zero-Knowledge Systems,Private smart contracts on Ethereum,Tier 1,Development/Testnet,FALSE,,Programmable privacy with noir,92
+zkSync,Zero-Knowledge Systems,ZK rollup for Ethereum scaling,Tier 1,Mainnet,TRUE,ZK,ZK rollup with account abstraction,88
+StarkNet,Zero-Knowledge Systems,STARK-based ZK rollup,Tier 1,Mainnet,TRUE,STRK,Cairo language and STARK proofs,87
+Polygon,Zero-Knowledge Systems,Multi-chain scaling with ZK tech,Tier 1,Mainnet,TRUE,POL,ZK-EVM and scaling suite,85
+Scroll,Zero-Knowledge Systems,ZK rollup with EVM equivalence,Tier 1,Mainnet,FALSE,,Bytecode-level EVM compatibility,84
+Taceo,Zero-Knowledge Systems,ZK infrastructure and tooling,Tier 2,Development/Testnet,FALSE,,ZK development tools,72
+Zama,Privacy-Preserving Computation,Fully Homomorphic Encryption (FHE),Tier 1,Development/Testnet,FALSE,,FHE for encrypted computation,90
+ZenGo,Privacy-Preserving Computation,MPC-based wallet security,Tier 2,Mainnet,FALSE,,Keyless wallet with MPC,75
+Fireblocks,Privacy-Preserving Computation,Institutional digital asset custody,Tier 2,Mainnet,FALSE,,Enterprise MPC custody,72
+ENS,Decentralized Identity & Attestation,Ethereum Name Service,Tier 1,Mainnet,TRUE,ENS,Decentralized naming standard,90
+Worldcoin,Decentralized Identity & Attestation,Proof of personhood with ZK,Tier 2,Mainnet,TRUE,WLD,Biometric proof of humanity,70
+Polygon ID,Decentralized Identity & Attestation,ZK-based identity protocol,Tier 1,Mainnet,FALSE,,ZK credentials and claims,85
+EAS,Decentralized Identity & Attestation,Ethereum Attestation Service,Tier 1,Mainnet,FALSE,,Universal attestation standard,88
+Gitcoin Passport,Decentralized Identity & Attestation,Sybil resistance through attestations,Tier 2,Mainnet,FALSE,,Composable identity stamps,78
+Buenos Aires QuarkID,Decentralized Identity & Attestation,Government-issued decentralized ID,Tier 2,Mainnet,FALSE,,First government ZK ID,75
+XMTP Labs,Communication & Messaging,Secure web3 messaging protocol,Tier 1,Mainnet,FALSE,,End-to-end encrypted web3 messaging,85
+HOPR,Communication & Messaging,Privacy-preserving messaging network,Tier 2,Mainnet,TRUE,HOPR,Mixnet for metadata privacy,78
+Waku,Communication & Messaging,Decentralized communication protocol,Tier 2,Development/Testnet,FALSE,,Censorship-resistant messaging,75
+Mysten Labs (Sui),Secrets-as-a-Service,Access control and secrets management,Tier 1,Mainnet,TRUE,SUI,Object-centric blockchain with native access control,82
+Trail of Bits,Formal Verification & Security,Security research and auditing,Tier 1,Mainnet,FALSE,,Industry-leading security research,88
+OpenZeppelin,Formal Verification & Security,Smart contract security standards,Tier 1,Mainnet,FALSE,,Defender and contract standards,90
+Spearbit,Formal Verification & Security,Security auditing collective,Tier 1,Mainnet,FALSE,,Expert auditor network,85
+Immunefi,Formal Verification & Security,Bug bounty platform for web3,Tier 1,Mainnet,FALSE,,Largest web3 bug bounty platform,87
+Code4rena,Formal Verification & Security,Competitive audit platform,Tier 1,Mainnet,FALSE,,Crowdsourced security audits,85
+Gitcoin,Democratic Funding Mechanisms,Quadratic funding for public goods,Tier 1,Mainnet,TRUE,GTC,Pioneered quadratic funding,88
+Optimism RetroPGF,Democratic Funding Mechanisms,Retroactive public goods funding,Tier 1,Mainnet,TRUE,OP,Retroactive rewards for impact,85
+Octant,Democratic Funding Mechanisms,Epoch-based public goods funding,Tier 2,Mainnet,FALSE,,GLM-backed funding rounds,78
+Hypercerts,Democratic Funding Mechanisms,Impact certificates for public goods,Tier 2,Mainnet,FALSE,,Tokenized impact claims,75
+Metaculus,Epistemic Infrastructure,Prediction and forecasting platform,Tier 2,Mainnet,FALSE,,Track record of accurate forecasts,80
+Polymarket,Epistemic Infrastructure,Prediction market platform,Tier 2,Mainnet,FALSE,,Real-money prediction markets,78
+CheckMateSG,Epistemic Infrastructure,Fact-checking infrastructure,Tier 3,Development/Testnet,FALSE,,Community fact verification,65
+Deepsafe,Epistemic Infrastructure,Deepfake detection technology,Tier 2,Development/Testnet,FALSE,,AI-generated content detection,72
+Safe (Gnosis Safe),Governance Tooling,Multi-signature wallet infrastructure,Tier 1,Mainnet,TRUE,SAFE,Industry standard multisig,92
+Argent,Governance Tooling,Smart wallet with social recovery,Tier 2,Mainnet,FALSE,,Mobile-first smart wallet,78
+Aragon,Governance Tooling,DAO creation and management,Tier 2,Mainnet,TRUE,ANT,DAO framework pioneer,75
+Compound Governor,Governance Tooling,On-chain governance framework,Tier 1,Mainnet,TRUE,COMP,Standard for on-chain voting,85
+Metagov,Governance Tooling,Governance research and tooling,Tier 2,Mainnet,FALSE,,Academic governance research,70
+FAB DAO,Governance Tooling,Taiwan civic tech DAO,Tier 3,Mainnet,FALSE,,Asian civic tech coordination,62
+Tally,Governance Tooling,Governance aggregation and voting,Tier 2,Mainnet,FALSE,,Cross-protocol governance UI,75
+Snapshot,Governance Tooling,Off-chain voting platform,Tier 1,Mainnet,FALSE,,Gasless governance voting,88
+Circles/CirclesUBI,Decentralized Monetary Infrastructure,Universal basic income protocol,Tier 2,Mainnet,TRUE,CRC,Web of trust UBI,72
+DAI (MakerDAO),Decentralized Monetary Infrastructure,Decentralized stablecoin,Tier 1,Mainnet,TRUE,DAI,Overcollateralized stable,90
+Ethena (USDe),Decentralized Monetary Infrastructure,Synthetic dollar protocol,Tier 2,Mainnet,TRUE,USDe,Delta-neutral stablecoin,72
+USDT,Decentralized Monetary Infrastructure,Centralized stablecoin (not d/acc aligned),Tier 3,Mainnet,TRUE,USDT,Centralization concern - not recommended,45
+USDC,Decentralized Monetary Infrastructure,Centralized stablecoin (not d/acc aligned),Tier 3,Mainnet,TRUE,USDC,Centralization concern - not recommended,48
+Pyth,Oracle Networks,High-frequency price oracle,Tier 2,Mainnet,TRUE,PYTH,Sub-second price updates,78
+Chronicle,Oracle Networks,Decentralized oracle protocol,Tier 2,Mainnet,FALSE,,MakerDAO oracle spinoff,75
+RedStone,Oracle Networks,Modular oracle network,Tier 2,Mainnet,FALSE,,Flexible oracle delivery,72
+Chainlink,Oracle Networks,Leading oracle network (centralization concern),Tier 2,Mainnet,TRUE,LINK,Market leader but centralization risk,70
+LayerZero,Cross-Chain Infrastructure,Omnichain interoperability protocol,Tier 2,Mainnet,TRUE,ZRO,Universal message passing,75
+Axelar,Cross-Chain Infrastructure,Cross-chain communication network,Tier 2,Mainnet,TRUE,AXL,General message passing,72
+Wormhole,Cross-Chain Infrastructure,Cross-chain messaging protocol,Tier 2,Mainnet,TRUE,W,Multi-chain bridge,70
+CoW Protocol,Cross-Chain Infrastructure,MEV-protected trading,Tier 2,Mainnet,TRUE,COW,Batch auctions and intent-based,78
+UniswapX,Cross-Chain Infrastructure,Intent-based trading protocol,Tier 2,Mainnet,TRUE,UNI,Cross-chain swaps,75
+Celestia,Data Availability & Storage,Modular data availability layer,Tier 1,Mainnet,TRUE,TIA,First modular DA layer,88
+EigenDA,Data Availability & Storage,Restaked data availability,Tier 1,Mainnet,FALSE,,EigenLayer-secured DA,85
+Avail,Data Availability & Storage,Modular blockchain data availability,Tier 2,Mainnet,TRUE,AVAIL,Validity proofs for DA,80
+Filecoin,Data Availability & Storage,Decentralized storage network,Tier 1,Mainnet,TRUE,FIL,Proven storage with proofs,85
+Arweave,Data Availability & Storage,Permanent decentralized storage,Tier 1,Mainnet,TRUE,AR,Permaweb and permanent storage,87
+Radicle,Data Availability & Storage,Decentralized code collaboration,Tier 2,Mainnet,TRUE,RAD,Peer-to-peer Git hosting,75
+The Graph,Data Availability & Storage,Decentralized indexing protocol,Tier 1,Mainnet,TRUE,GRT,Blockchain data indexing,88
+Subsquid,Data Availability & Storage,Decentralized data lake,Tier 2,Mainnet,TRUE,SQD,Multi-chain indexing,75
+Sablier,Streaming & Treasury,Token streaming protocol,Tier 2,Mainnet,FALSE,,Real-time payments,72
+Superfluid,Streaming & Treasury,Programmable cashflows,Tier 2,Mainnet,FALSE,,Streaming finance primitive,75
+Ethereum Foundation,Ecosystem Connector,Core Ethereum development and grants,Tier 1,Mainnet,FALSE,,Ecosystem stewardship,95
+Foresight Institute,Ecosystem Connector,Longtermist technology research,Tier 2,Mainnet,FALSE,,Existential risk research,78
+web3privacy,Ecosystem Connector,Privacy advocacy and research,Tier 2,Mainnet,FALSE,,Privacy ecosystem coordination,75
+Emergent Research,Ecosystem Connector,Crypto research and analysis,Tier 2,Mainnet,FALSE,,Independent research,70
+Plurality Institute,Ecosystem Connector,Digital democracy research,Tier 2,Mainnet,FALSE,,Plurality and democracy tech,75
+Open Source Observer,Ecosystem Connector,Open source funding analytics,Tier 2,Mainnet,FALSE,,OSS impact measurement,72

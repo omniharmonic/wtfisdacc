@@ -1,0 +1,221 @@
+{
+  "main": {
+    "id": "753775e40e9fca00",
+    "type": "split",
+    "children": [
+      {
+        "id": "01438312132050ea",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dd8dc1ed08d0e6e0",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          },
+          {
+            "id": "ef4058fa7171054b",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.5"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.5"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "6f7c64241cce0674",
+    "type": "split",
+    "children": [
+      {
+        "id": "ed8c0cac0b3dc76e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "298f0692c7dc650a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "04ea21cd6ff1bf48",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "57d5437980b2948d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "037b7de0db2b37c9",
+    "type": "split",
+    "children": [
+      {
+        "id": "e9987dee681d0652",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f4fcca0f3ad19024",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "7c7ed08d556501c6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "1ddcc5f30196de71",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "892be39523f20221",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "6ac8beee28a85e95",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "ef4058fa7171054b",
+  "lastOpenFiles": [
+    "03-Projects/Hyperliquid.md",
+    "03-Projects/Chainlink.md",
+    "03-Projects/Semaphore.md",
+    "03-Projects/World ID.md",
+    "03-Projects/EAS.md",
+    "03-Projects/Arbitrum.md",
+    "03-Projects/Optimism.md",
+    "03-Projects/Gitcoin.md",
+    "03-Projects/Safe.md",
+    "03-Projects/Celestia.md",
+    "03-Projects/Gitcoin Passport.md",
+    "03-Projects/Polygon ID.md",
+    "03-Projects/Zama.md",
+    "03-Projects/Aztec Network.md",
+    "03-Projects/StarkNet.md",
+    "03-Projects/zkSync.md",
+    "02-Sectors/Art and Media.md",
+    "02-Sectors/Public Goods and Social Coordination.md",
+    "02-Sectors/Governance and E-Voting.md",
+    "02-Sectors/Insurance.md",
+    "02-Sectors/Healthcare.md",
+    "02-Sectors/Energy and Carbon Markets.md",
+    "02-Sectors/Supply Chain and Logistics.md",
+    "02-Sectors/Real Estate.md",
+    "02-Sectors/Capital Markets and RWA Tokenization.md",
+    "02-Sectors/Financial Services and Banking.md"
+  ]
+}

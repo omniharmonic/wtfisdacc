@@ -1,0 +1,51 @@
+Name,Category,Description,Funding Raised,TVL / Market Metrics,Key Differentiator,D/acc Score,Investment Tier,Stage,Token,Token Symbol
+Ethereum Attestation Service (EAS),Attestation Infrastructure,Two core contracts (SchemaRegistry.sol and EAS.sol) for on-chain/off-chain attestations with custom resolvers,Ethereum ecosystem (open source),80% compliance cost reduction reported,Foundational attestation primitive; 90% faster verification vs paper,5,Tier 1,Mainnet,FALSE,
+Polygon ID,ZK Identity,ZK-powered identity using Iden3 protocol - private by default with selective disclosure,Part of Polygon ecosystem,Buenos Aires: 3.6M citizens,Government-scale ZK identity deployment,5,Tier 1,Mainnet,FALSE,
+Gitcoin Passport (Holonym),Reputation/Sybil Resistance,Multi-signal identity verification aggregating web2/web3 credentials,Acquired by Holonym Foundation,$380M+ in funds protected; 2M+ users; 34M+ credentials,Stamps system with forgery-cost-based weights; min score 20,5,Tier 1,Mainnet,FALSE,
+Zama (fhEVM),FHE,Confidential smart contracts via fully homomorphic encryption - computation on encrypted data,$130M total ($73M Series A + $57M Series B),Unicorn status; 20 TPS current,Only FHE unicorn; targeting 1000 TPS with ASICs; fhEVM,5,Tier 1,Development/Testnet,FALSE,
+Aztec Network,Privacy L2,Privacy-first L2 with hybrid execution - Private Execution Environment plus public AVM,$100M Series B,Testnet May 2025,Noir programming language for ZK circuits; truly private smart contracts,5,Tier 1,Testnet,FALSE,
+zkSync,ZK Rollups,zkEVM rollup with native account abstraction and hyperscaling roadmap,$458M total,~$500M TVL,zkEVM with full EVM equivalence; AA-native,5,Tier 1,Mainnet,TRUE,ZK
+StarkNet,ZK Rollups,zk-STARK based L2 with Cairo language - quantum-resistant with no trusted setup,$282M+,Growing ecosystem,No trusted setup; quantum-resistant proofs,5,Tier 1,Mainnet,TRUE,STRK
+Scroll,ZK Rollups,zkEVM rollup focused on EVM equivalence and decentralization,$80M+,~$100M TVL,EVM equivalence; decentralization focus,5,Tier 1,Mainnet,TRUE,SCR
+Semaphore,ZK Identity,Anonymous group membership signaling - powers World ID's proof of personhood,Ethereum Foundation PSE,Integrated in World ID,Privacy-preserving group membership proofs,5,Tier 1,Mainnet,FALSE,
+World ID,ZK Identity,Biometric proof-of-personhood with ZK privacy using Semaphore protocol,Part of Worldcoin ($240M+),9000+ project integrations,Biometric uniqueness with ZK privacy,4,Tier 1,Mainnet,TRUE,WLD
+Celestia,Data Availability,Modular DA layer with Data Availability Sampling; 8MB blocks targeting 1GB,$155M,Mainnet live,99.9% cost reduction vs Ethereum mainnet; DAS for light nodes,4,Tier 2,Mainnet,TRUE,TIA
+EigenDA,Data Availability,DA using Ethereum restaking via EigenLayer; 100MB/second throughput,$170M+ (via EigenLayer),Part of EigenLayer ecosystem,Ethereum-aligned security model via restaking,4,Tier 2,Mainnet,FALSE,
+Avail,Data Availability,KZG commitments with fast finality for rollup data availability,$27M seed (Founders Fund-led),Growing adoption,KZG commitments; fast finality,4,Tier 2,Mainnet,TRUE,AVAIL
+Safe (Gnosis Safe),Multisig,Multi-signature infrastructure for asset custody - industry standard,$100M (2022),$100B+ secured; 7M+ accounts; 30M+ transactions,Industry standard; account abstraction stack; modular,4,Tier 2,Mainnet,TRUE,SAFE
+Optimism,Rollups,Optimistic rollup with retroactive public goods funding (RetroPGF),$178M+,~$800M TVL,RetroPGF committed $100M+ to 501 contributors; OP Stack,4,Tier 2,Mainnet,TRUE,OP
+Arbitrum,Rollups,Optimistic rollup - largest L2 by TVL with Nitro architecture,$120M Series B,~$2.5B TVL,Largest L2 ecosystem; Nitro architecture; Stylus multi-VM,4,Tier 2,Mainnet,TRUE,ARB
+Base,Rollups,Coinbase L2 built on OP Stack - institutional on-ramp to L2s,Coinbase backed,~$1B+ TVL,Coinbase distribution; institutional on-ramp,3,Tier 2,Mainnet,FALSE,
+Hypercerts,Impact Certificates,Tokenized impact claims (extended ERC-1155) encoding scope and contributors,Protocol Labs + Gitcoin grants,10000+ in circulation; 20000+ addresses,EasyRetroPGF integration; impact claim standard,4,Tier 2,Mainnet,FALSE,
+Allo Protocol,Quadratic Funding,Programmable capital allocation infrastructure for funding mechanisms,Gitcoin ecosystem,Powers Gitcoin Grants,Any community can run funding rounds; modular,4,Tier 2,Mainnet,FALSE,
+Lit Protocol,MPC,Decentralized key management with programmable conditions for access control,$20M+,Growing adoption,Programmable conditions for decryption; threshold cryptography,4,Tier 2,Mainnet,FALSE,
+Aave,Lending,Decentralized lending/borrowing with flash loans across 15+ chains,Various,$10.76B TVL across 15+ chains,Flash loans; multi-chain; GHO stablecoin,3,Tier 2,Mainnet,TRUE,AAVE
+Compound,Lending,Decentralized lending with isolated markets via Comet architecture,Various,$2B+ TVL,Compound Governor became DAO standard; isolated markets,3,Tier 2,Mainnet,TRUE,COMP
+Morpho Blue,Lending,Custom market creation with modular parameters for lending,Various,Growing TVL,Modular market creation; capital efficiency,3,Tier 2,Mainnet,TRUE,MORPHO
+Uniswap,AMMs,Largest DEX with concentrated liquidity V3 achieving 4000x capital efficiency,$165M+,$1.8T+ cumulative volume,4000x capital efficiency vs V2; dominant DEX,3,Tier 2,Mainnet,TRUE,UNI
+Curve,AMMs,StableSwap optimized for pegged assets with 0.04% fees - veCRV model,Various,$1.5B+ TVL,StableSwap algorithm; veCRV governance model,3,Tier 2,Mainnet,TRUE,CRV
+ENS (Ethereum Name Service),DID,Human-readable naming integrated with Ethereum identity - de facto standard,DAO treasury,2M+ names registered,De facto Ethereum identity standard; .eth names,4,Tier 2,Mainnet,TRUE,ENS
+Filecoin,Decentralized Storage,Incentivized storage with smart contracts (FVM) - 22 exabytes capacity,$257M,22 exabytes capacity; ~3000 providers,414% storage growth to Q1 2024; FVM smart contracts,4,Tier 2,Mainnet,TRUE,FIL
+Arweave,Decentralized Storage,Permanent storage with one-time payment ($9-12/GB for ~200-year storage),Various,~140TB Permaweb,Permanent storage; one-time payment model,4,Tier 2,Mainnet,TRUE,AR
+The Graph,Indexing,Decentralized indexing covering 40+ blockchains for dApp data access,Various,$3.4B GRT growth,40+ blockchains covered; subgraph standard,3,Tier 3,Mainnet,TRUE,GRT
+Chainlink,Oracles,Decentralized oracle network - first mover with 46-58% market share,$32M ICO + ecosystem,$20-39B TVS (46-58% market share),400+ integrations; first mover; CCIP cross-chain,3,Tier 3,Mainnet,TRUE,LINK
+Pyth,Oracles,Pull-model oracle with 400ms updates sourced from exchanges,Jump Crypto backed,$4.7B TVS (46x growth in 2024),Sub-second latency; exchange-sourced data,3,Tier 3,Mainnet,TRUE,PYTH
+Chronicle,Oracles,Original MakerDAO oracle with 61% cheaper operation via Scribe technology,Part of MakerDAO ecosystem,Growing market share,61% cheaper than Chainlink; Scribe technology,3,Tier 3,Mainnet,FALSE,
+RedStone,Oracles,Hybrid push/pull architecture - fastest-growing oracle network,Various,Fastest-growing,Hybrid push/pull model; modular design,3,Tier 3,Mainnet,FALSE,
+LayerZero,Cross-Chain Bridges,Omnichain interoperability with modular DVN architecture,$120M+ Series A,$304M TVL; $23.9B volume,Modular DVN architecture; ZK verification emerging,3,Tier 3,Mainnet,TRUE,ZRO
+Wormhole,Cross-Chain Bridges,Guardian network bridging with broad chain support,$225M+,$850M TVL; $30B volume,Broad chain support; guardian network,2,Tier 3,Mainnet,TRUE,W
+Axelar,Cross-Chain Bridges,DPoS consensus with general message passing across 64+ chains,Various,$224M TVL; 64+ chains,General message passing; DPoS security,3,Tier 3,Mainnet,TRUE,AXL
+CoW Protocol,Intent-Based Systems,Batch auctions with MEV protection returning value to users,Gnosis ecosystem,63% of intent trading; $2.4B monthly,Returns MEV to users; batch auctions,3,Tier 3,Mainnet,TRUE,COW
+UniswapX,Intent-Based Systems,Cross-chain intent-based trading with Dutch auction order filling,Uniswap Labs,Growing volume,Dutch auction fills; cross-chain support,3,Tier 3,Mainnet,FALSE,
+Hyperliquid,Perpetual DEXs,Custom L1 for derivatives processing 200K orders/second,Self-funded,64.8% perp DEX share; $1.4T+ volume,Disrupted market from 0.3% to dominance; custom L1,3,Tier 3,Mainnet,TRUE,HYPE
+dYdX,Perpetual DEXs,Perpetual DEX migrated from StarkWare to Cosmos SDK,Various,$1.5T cumulative volume,Cosmos SDK migration; orderbook model,3,Tier 3,Mainnet,TRUE,DYDX
+GMX,Perpetual DEXs,Perpetual DEX with liquidity pool model on Arbitrum - real yield for LPs,Various,$500M+ TVL,Real yield for LPs; liquidity pool model,3,Tier 3,Mainnet,TRUE,GMX
+Immunefi,Audit Mechanisms,Bug bounty platform paying $155M+ to whitehats for vulnerabilities,Various,$155M+ paid to whitehats,Largest Web3 bug bounty platform,3,Tier 3,Mainnet,FALSE,
+Code4rena,Audit Mechanisms,Competitive audit platform with warden competition model,Various,Growing warden community,Competitive warden model; community audits,3,Tier 3,Mainnet,FALSE,
+Sablier,Treasury Management,Token streaming protocol with NFT-represented streams - pioneered 2019,Various,Optimism RetroPGF Round 4: 10M OP via Sablier,Pioneered token streaming; NFT streams,3,Tier 3,Mainnet,FALSE,
+Superfluid,Treasury Management,Per-second payment flows with Constant Flow Agreements,Various,Growing adoption,Real-time streaming; Constant Flow Agreements,3,Tier 3,Mainnet,FALSE,
+Snapshot,Voting Mechanisms,Off-chain voting for DAOs with gasless governance,Various,Dominant DAO voting tool,Gasless voting; strategy flexibility,4,Tier 2,Mainnet,FALSE,
+Aragon,DAO Frameworks,DAO framework with 27x more active users than alternatives,Various,Leading DAO framework by users,Full-stack DAO creation; legal wrapper support,3,Tier 3,Mainnet,TRUE,ANT
+Zupass,ZK Identity,ZK credential system for tickets and attestations - incubated at Zuzalu,Ethereum ecosystem,Used by thousands at Devconnect,Privacy-preserving ticketing; Zuzalu origin,5,Tier 1,Mainnet,FALSE,
+Ethena,Stablecoins,Delta-neutral stablecoin USDe growing from $146M to $6.2B,$14M,~$6.2B market cap (USDe),Delta-neutral mechanism; rapid growth,3,Tier 2,Mainnet,TRUE,ENA
+DAI,Stablecoins,Decentralized overcollateralized stablecoin by MakerDAO,MakerDAO ecosystem,~$5B market cap,Overcollateralized; decentralized; battle-tested,4,Tier 2,Mainnet,TRUE,DAI

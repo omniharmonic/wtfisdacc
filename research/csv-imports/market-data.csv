@@ -1,0 +1,30 @@
+Name,Category,Current Value,2030+ Projection,CAGR,Source,Related Primitive,Related Sector
+Stablecoin Market Cap,Market Size,$309B (2024),Continued growth,N/A,Research data,Stablecoins,Financial Services / Banking
+Stablecoin Annual Volume,Volume,$27.6T (exceeds Visa+Mastercard),Growing,N/A,Research data,Stablecoins,Financial Services / Banking
+RWA Tokenization Current,Market Size,$2.08T (private credit $14B; treasuries $8.2B),$3.5-30T (median $13.55T),45.46%,Multiple analysts,Settlement Layers,Capital Markets / RWA Tokenization
+ZK Technology Market,Market Size,$1.28B (2024),$7.59B by 2033,22.10%,Market research,Zero-Knowledge Proofs,All
+ZK L2 Solutions Market,Market Size,Emerging,$90B by 2031,60.70%,Market research,Rollups,All
+DeFi TVL,TVL,$129-214B,$178B revenue by 2029,43%,DeFiLlama/Research,Lending/Borrowing,Financial Services / Banking
+FHE Total Funding,Funding,~$130M (Zama + Aztec primarily),Nascent market,N/A,Funding data,Fully Homomorphic Encryption (FHE),Healthcare
+Blockchain Energy Market,Market Size,Emerging,$265.58B by 2033,71.14%,Market research,Oracle Infrastructure,Energy / Carbon Markets
+Healthcare Blockchain Market,Market Size,$831M (2024),$178.91B by 2034,N/A (massive),Market research,Zero-Knowledge Identity,Healthcare
+Supply Chain Blockchain,Market Size,MediLedger consortium active,$97.17B by 2032,11.20%,Market research,Oracle Infrastructure,Supply Chain / Logistics
+Parametric Insurance,Market Size,Emerging,$40.6B by 2033,N/A,Market research,Oracle Infrastructure,Insurance
+DAO Treasury Holdings,TVL,~$34B total,Growing,N/A,DeepDAO/Research,Treasury Management,Governance / E-Voting
+DAO Tooling Market,Market Size,$170M (2024),$333M by 2031,N/A,Market research,Voting Mechanisms,Governance / E-Voting
+Perpetual DEX Volume,Volume,$1.4T+ annual (2024),Growing,872% YoY (2024),Research data,Perpetual DEXs,Financial Services / Banking
+Safe TVL,TVL,$100B+ secured,Growing,N/A,Safe stats,Multisig Infrastructure,All
+Gitcoin Distributed,Funding,$60M+ distributed,Expanding,N/A,Gitcoin,Quadratic Funding,Public Goods / Social Coordination
+L1 Funding Decline,Funding,Down 85% Q4 2024,Maturing market,N/A,Research data,Consensus Mechanisms,All
+Enterprise Blockchain Funding,Funding,Down 69% YoY to $164M,Fading narrative,N/A,Research data,Settlement Layers,Financial Services / Banking
+Cross-Chain Bridge TVL,TVL,~$1.4B total,$2.8B+ historical losses,N/A,Research data,Cross-Chain Bridges,All
+Fractional Real Estate,Market Size,$3.5B (2024),$19.4B by 2033,21%,Market research,Decentralized Identity (DID),Real Estate
+NFT Market,Market Size,~$35B (down from $414B peak May 2022),Uncertain - transforming,Negative,NFT market data,Decentralized Storage,Art / Media
+BlackRock BUIDL AUM,TVL,$2.9B AUM,Growing,N/A,BlackRock,Settlement Layers,Capital Markets / RWA Tokenization
+Hyperliquid Market Share,Market Size,64.8% of perp DEX market (from 0.3%),Dominant,N/A,Research data,Perpetual DEXs,Financial Services / Banking
+Gitcoin Passport Users,Adoption,2M+ users; 34M+ credentials,Growing,N/A,Gitcoin,Reputation/Sybil Resistance,All
+Buenos Aires ZK Identity,Adoption,3.6M citizens,Model for replication,N/A,Research data,Zero-Knowledge Identity,Governance / E-Voting
+Estonia Online Voting,Adoption,>50% votes online (2023 - first globally),Global model,N/A,Estonia government,Voting Mechanisms,Governance / E-Voting
+MediLedger Consortium,Adoption,24+ companies (Pfizer; McKesson; Cardinal Health),Expanding,N/A,MediLedger,Oracle Infrastructure,Supply Chain / Logistics
+Ethereum Validators,Adoption,800000+ validators,Growing,N/A,Ethereum stats,Consensus Mechanisms,All
+ENS Names Registered,Adoption,2M+ names,Growing,N/A,ENS stats,Decentralized Identity (DID),All
