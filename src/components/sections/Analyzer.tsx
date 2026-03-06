@@ -37,9 +37,6 @@ export default function Analyzer() {
 
   const { messages, status, sendMessage } = useChat({
     transport,
-    onFinish: () => {
-      setAnalysisComplete(true);
-    },
     onError: (error) => {
       setErrorMessage(error.message || "[SYSTEM ERROR] Analysis failed.");
     },
@@ -60,11 +57,15 @@ export default function Analyzer() {
               input?: ToolCallResult;
               output?: ToolCallResult;
             };
+            let result: ToolCallResult | null = null;
             if (toolPart.state === "output-available" && toolPart.output) {
-              setToolResult(toolPart.output);
+              result = toolPart.output;
             } else if (toolPart.state === "input-available" && toolPart.input) {
-              // Tool was called but no execute fn — use input as result
-              setToolResult(toolPart.input);
+              result = toolPart.input;
+            }
+            if (result) {
+              setToolResult(result);
+              setAnalysisComplete(true);
             }
           }
         }
