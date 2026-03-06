@@ -162,11 +162,26 @@ export default function Analyzer() {
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Analysis failed";
-      // Try to extract error from JSON response body
+      // Try to parse JSON error from API response
+      try {
+        const parsed = JSON.parse(msg);
+        if (parsed.needsTextInput) {
+          setTextFallback(true);
+          setErrorMessage(parsed.error || "[WARN] Could not reach that URL. Describe the project below.");
+          return;
+        }
+        if (parsed.error) {
+          setErrorMessage(parsed.error);
+          return;
+        }
+      } catch {
+        // Not JSON — handle as plain string
+      }
       if (msg.includes("429")) {
         setErrorMessage("[RATE LIMIT] Too many requests. Please wait a few minutes.");
       } else {
-        setErrorMessage(`[ERROR] ${msg}`);
+        setErrorMessage("[ERROR] Could not reach that URL. Try pasting a description instead.");
+        setTextFallback(true);
       }
     }
   };
