@@ -129,6 +129,35 @@ export default function InteractiveMap() {
     isPanning.current = false;
   }, []);
 
+  // Touch handlers for mobile pan
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      isPanning.current = true;
+      panStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  }, []);
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isPanning.current || !svgRef.current || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      const rect = svgRef.current.getBoundingClientRect();
+      const dx = ((touch.clientX - panStart.current.x) / rect.width) * viewBox.w;
+      const dy = ((touch.clientY - panStart.current.y) / rect.height) * viewBox.h;
+      panStart.current = { x: touch.clientX, y: touch.clientY };
+      setViewBox((vb) => ({
+        ...vb,
+        x: Math.max(0, Math.min(MAP_W - vb.w, vb.x - dx)),
+        y: Math.max(0, Math.min(MAP_H - vb.h, vb.y - dy)),
+      }));
+    },
+    [viewBox.w, viewBox.h]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    isPanning.current = false;
+  }, []);
+
   // Submit new pin
   const handleSubmitPin = async (data: {
     name: string;
@@ -180,17 +209,17 @@ export default function InteractiveMap() {
           <span className="font-mono text-xs text-dacc-green tracking-widest uppercase">
             // The Map
           </span>
-          <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4">
+          <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4">
             The d/acc{" "}
             <span className="text-dacc-green text-glow-green">ecosystem</span>.
           </h2>
           <p className="font-sans text-dacc-muted mt-2 max-w-lg mx-auto">
-            Click anywhere to add a pin. Scroll to zoom, drag to pan.
+            Tap a pin for details. Scroll to zoom, drag to pan.
           </p>
         </div>
 
         {/* Quadrant legend */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4">
           {(Object.entries(QUADRANT_LABELS) as [Quadrant, string][]).map(
             ([key, label]) => (
               <span
@@ -241,6 +270,9 @@ export default function InteractiveMap() {
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
               {/* Background — quadrant grid */}
               <rect width={MAP_W} height={MAP_H} fill="#0F0F23" />
@@ -256,16 +288,16 @@ export default function InteractiveMap() {
               <line x1={0} y1={MAP_H / 2} x2={MAP_W} y2={MAP_H / 2} stroke="#9999AA" strokeWidth={1} opacity={0.2} />
 
               {/* Axis labels */}
-              <text x={MAP_W / 4} y={60} textAnchor="middle" fill={QUADRANT_COLORS.physical_defense} fontSize={28} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
+              <text x={MAP_W / 4} y={60} textAnchor="middle" fill={QUADRANT_COLORS.physical_defense} fontSize={44} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
                 Physical Defense
               </text>
-              <text x={MAP_W * 3 / 4} y={60} textAnchor="middle" fill={QUADRANT_COLORS.physical_coordination} fontSize={28} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
+              <text x={MAP_W * 3 / 4} y={60} textAnchor="middle" fill={QUADRANT_COLORS.physical_coordination} fontSize={44} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
                 Physical Coordination
               </text>
-              <text x={MAP_W / 4} y={MAP_H - 30} textAnchor="middle" fill={QUADRANT_COLORS.digital_defense} fontSize={28} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
+              <text x={MAP_W / 4} y={MAP_H - 30} textAnchor="middle" fill={QUADRANT_COLORS.digital_defense} fontSize={44} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
                 Digital Defense
               </text>
-              <text x={MAP_W * 3 / 4} y={MAP_H - 30} textAnchor="middle" fill={QUADRANT_COLORS.digital_coordination} fontSize={28} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
+              <text x={MAP_W * 3 / 4} y={MAP_H - 30} textAnchor="middle" fill={QUADRANT_COLORS.digital_coordination} fontSize={44} fontFamily="JetBrains Mono, monospace" fontWeight="bold" opacity={0.5}>
                 Digital Coordination
               </text>
 
@@ -291,27 +323,39 @@ export default function InteractiveMap() {
             </svg>
           </div>
 
-          {/* Pin detail popup */}
+          {/* Pin detail popup — centered overlay */}
           {selectedPin && (
-            <div className="absolute top-4 right-4">
-              <MapPinDetail
-                pin={selectedPin}
-                onClose={() => setSelectedPin(null)}
-              />
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              onClick={() => setSelectedPin(null)}
+            >
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="relative z-10" onClick={(e) => e.stopPropagation()}>
+                <MapPinDetail
+                  pin={selectedPin}
+                  onClose={() => setSelectedPin(null)}
+                />
+              </div>
             </div>
           )}
 
-          {/* Add pin form */}
+          {/* Add pin form — centered overlay */}
           {showForm && (
-            <div className="absolute top-4 left-4 w-80 z-30">
-              <MapPinForm
-                prefill={pendingMapProject}
-                onSubmit={handleSubmitPin}
-                onCancel={() => {
-                  setShowForm(false);
-                  clearPendingMapProject();
-                }}
-              />
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              onClick={() => { setShowForm(false); clearPendingMapProject(); }}
+            >
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="relative z-10 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+                <MapPinForm
+                  prefill={pendingMapProject}
+                  onSubmit={handleSubmitPin}
+                  onCancel={() => {
+                    setShowForm(false);
+                    clearPendingMapProject();
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>

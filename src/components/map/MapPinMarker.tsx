@@ -26,7 +26,7 @@ interface MapPinMarkerProps {
 
 export default function MapPinMarker({ pin, onClick, isSelected }: MapPinMarkerProps) {
   const color = QUADRANT_COLORS[pin.quadrant] || "#00FF88";
-  const size = isSelected ? 16 : 10;
+  const size = isSelected ? 28 : 20;
 
   return (
     <g
@@ -75,10 +75,10 @@ export default function MapPinMarker({ pin, onClick, isSelected }: MapPinMarkerP
       ) : (
         <text
           x={pin.x}
-          y={pin.y + 3}
+          y={pin.y + size * 0.3}
           textAnchor="middle"
           fill={color}
-          fontSize={size * 0.8}
+          fontSize={size * 0.9}
           fontFamily="JetBrains Mono, monospace"
           fontWeight="bold"
         >
@@ -88,14 +88,14 @@ export default function MapPinMarker({ pin, onClick, isSelected }: MapPinMarkerP
       {/* Label */}
       <text
         x={pin.x}
-        y={pin.y + size + 14}
+        y={pin.y + size + 22}
         textAnchor="middle"
         fill="#E0E0E0"
-        fontSize={9}
+        fontSize={16}
         fontFamily="JetBrains Mono, monospace"
         opacity={isSelected ? 1 : 0.7}
       >
-        {pin.name.length > 15 ? pin.name.slice(0, 14) + "…" : pin.name}
+        {pin.name.length > 18 ? pin.name.slice(0, 17) + "…" : pin.name}
       </text>
     </g>
   );

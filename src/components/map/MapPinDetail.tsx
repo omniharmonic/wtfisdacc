@@ -13,7 +13,7 @@ export default function MapPinDetail({ pin, onClose }: MapPinDetailProps) {
 
   return (
     <div
-      className="absolute z-20 w-72 border bg-dacc-bg/95 backdrop-blur-sm p-4"
+      className="w-72 sm:w-80 border bg-dacc-bg/95 backdrop-blur-sm p-4"
       style={{ borderColor: `${color}40` }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">

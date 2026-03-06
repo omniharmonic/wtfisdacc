@@ -6,6 +6,13 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
+// Normalized exponential: stays flat then rockets up — true hockey stick
+const EXP_K = 5;
+const EXP_DENOM = Math.exp(EXP_K) - 1;
+function expCurve(frac: number) {
+  return (Math.exp(EXP_K * frac) - 1) / EXP_DENOM;
+}
+
 export default function AuthoritarianGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -157,7 +164,7 @@ export default function AuthoritarianGraph() {
         for (let i = 1; i <= futureDraw; i++) {
           const frac = i / totalPoints;
           const x = futureStart + futureW * frac;
-          const yNorm = (nowY - pad.top) / gH - 0.5 * Math.pow(frac, 2);
+          const yNorm = (nowY - pad.top) / gH - 0.85 * expCurve(frac);
           const y = pad.top + gH * Math.max(0.05, yNorm);
           ctx.lineTo(x, y);
         }
@@ -188,16 +195,16 @@ export default function AuthoritarianGraph() {
 
           ctx.fillStyle = `rgba(255, 68, 68, ${labelAlpha})`;
           ctx.textAlign = "left";
-          const redLabelX = futureStart + futureW * 0.55;
-          const redLabelFrac = 0.55;
-          const redLabelYNorm = (nowY - pad.top) / gH - 0.5 * Math.pow(redLabelFrac, 2);
-          ctx.fillText("AI + Surveillance", redLabelX + 5, pad.top + gH * Math.max(0.05, redLabelYNorm) - 10);
+          const redLabelFrac = 0.7;
+          const redLabelX = futureStart + futureW * redLabelFrac;
+          const redLineY = pad.top + gH * Math.max(0.05, (nowY - pad.top) / gH - 0.85 * expCurve(redLabelFrac));
+          ctx.fillText("AI + Surveillance", redLabelX + 5, redLineY - 18);
 
           ctx.fillStyle = `rgba(0, 255, 136, ${labelAlpha})`;
-          const greenLabelX = futureStart + futureW * 0.55;
-          const greenLabelFrac = 0.55;
-          const greenLabelYNorm = (nowY - pad.top) / gH + 0.35 * Math.pow(greenLabelFrac, 1.3);
-          ctx.fillText("d/acc Defensive Tech", greenLabelX + 5, pad.top + gH * Math.min(0.95, greenLabelYNorm) + 18);
+          const greenLabelFrac = 0.7;
+          const greenLabelX = futureStart + futureW * greenLabelFrac;
+          const greenLineY = pad.top + gH * Math.min(0.95, (nowY - pad.top) / gH + 0.35 * Math.pow(greenLabelFrac, 1.3));
+          ctx.fillText("d/acc Defensive Tech", greenLabelX + 5, greenLineY + 24);
         }
       }
     }

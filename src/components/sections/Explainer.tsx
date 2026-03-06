@@ -26,7 +26,7 @@ function Section({
   return (
     <motion.div
       {...fadeInUp}
-      className={`max-w-3xl mx-auto px-4 py-16 sm:py-24 ${className}`}
+      className={`max-w-3xl mx-auto px-4 py-12 sm:py-24 ${className}`}
     >
       {children}
     </motion.div>
@@ -146,7 +146,7 @@ function FourDsSection() {
   return (
     <Section className="border-t border-dacc-green/10">
       <SectionTag>// The Four D&apos;s Test</SectionTag>
-      <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+      <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
         The diagnostic checklist.
       </h2>
       <div className="space-y-4 mt-8">
@@ -260,27 +260,32 @@ export default function Explainer() {
       {/* Section A: The Problem */}
       <Section>
         <SectionTag>// The Problem</SectionTag>
-        <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
-          Technology accelerates.
+        <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+          The default trajectory
           <br />
-          <span className="text-dacc-muted">That&apos;s not the question.</span>
+          <span className="text-dacc-red">is authoritarian.</span>
         </h2>
         <div className="space-y-4 font-sans text-dacc-muted leading-relaxed">
           <p>
-            The question is: <span className="text-dacc-text">acceleration toward what?</span>
+            AI surveillance systems that predict and punish dissent.
+            Centralized platforms that control what billions can say, see, and
+            sell. Digital censorship infrastructure that can be activated with
+            a single policy change.{" "}
+            <span className="text-dacc-text">
+              These aren&apos;t hypotheticals — they&apos;re accelerating.
+            </span>
           </p>
           <p>
-            Toward centralized control? Or distributed resilience?
-          </p>
-          <p>
-            Toward offense? Or defense?
+            Without strategic countermeasures, every breakthrough in AI, biotech,
+            and networking concentrates more power in fewer hands. The window to
+            build defensible alternatives is narrowing.
           </p>
           <p className="text-dacc-green font-mono text-sm mt-8">
-            d/acc is a filter. A framework. A diagnostic.
+            d/acc is the counterstrategy.
           </p>
           <p className="text-dacc-text">
-            It asks: does this technology make the world more defensible, more
-            democratic, more decentralized?
+            A framework for accelerating the technologies that preserve human
+            flourishing and democracy — and identifying the ones that don&apos;t.
           </p>
         </div>
 
@@ -291,7 +296,7 @@ export default function Explainer() {
       {/* Section B: The Axes */}
       <Section className="border-t border-dacc-green/10">
         <SectionTag>// The Axes</SectionTag>
-        <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+        <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
           Two dimensions.
           <br />
           <span className="text-dacc-green">Four quadrants.</span>
@@ -300,7 +305,7 @@ export default function Explainer() {
           <motion.div
             {...fadeInUp}
             transition={{ delay: 0.1 }}
-            className="p-6 border border-dacc-cyan/20 bg-dacc-surface/30"
+            className="p-4 sm:p-6 border border-dacc-cyan/20 bg-dacc-surface/30"
           >
             <div className="font-mono text-dacc-cyan font-bold mb-2">
               Y-AXIS: ATOMS ↔ BITS
@@ -316,7 +321,7 @@ export default function Explainer() {
           <motion.div
             {...fadeInUp}
             transition={{ delay: 0.2 }}
-            className="p-6 border border-dacc-yellow/20 bg-dacc-surface/30"
+            className="p-4 sm:p-6 border border-dacc-yellow/20 bg-dacc-surface/30"
           >
             <div className="font-mono text-dacc-yellow font-bold mb-2">
               X-AXIS: SURVIVE ↔ THRIVE
@@ -335,7 +340,7 @@ export default function Explainer() {
       {/* Section C: The Quadrant Preview */}
       <Section className="border-t border-dacc-green/10">
         <SectionTag>// The Map</SectionTag>
-        <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+        <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
           The d/acc landscape.
         </h2>
         <motion.div
@@ -395,7 +400,7 @@ export default function Explainer() {
       {/* Section E: The Scoring */}
       <Section className="border-t border-dacc-green/10">
         <SectionTag>// The Scoring</SectionTag>
-        <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
+        <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4 mb-8">
           100 points. Four dimensions.
         </h2>
         <p className="text-dacc-muted font-sans mb-8">
@@ -429,11 +434,11 @@ export default function Explainer() {
             </div>
           ))}
         </div>
-        <div className="mt-8 p-4 border border-dacc-green/20 bg-dacc-surface/30">
-          <p className="font-mono text-sm text-dacc-green">
-            Ready to test a project?
-          </p>
-          <p className="font-sans text-sm text-dacc-muted mt-2">
+        <div className="mt-8 text-center">
+          <a href="#analyzer" className="btn-primary inline-block">
+            Ready to test a project? →
+          </a>
+          <p className="font-sans text-sm text-dacc-muted mt-3">
             The analyzer below uses this exact rubric. Paste any URL and get an
             instant d/acc diagnostic.
           </p>

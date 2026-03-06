@@ -51,12 +51,12 @@ export default function Nav() {
         >
           d/acc
         </a>
-        <div className="flex items-center gap-1 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto scrollbar-hide">
           {NAV_ITEMS.map(({ id, label }) => (
             <a
               key={id}
               href={`#${id}`}
-              className={`font-mono text-xs sm:text-sm px-2 py-1 transition-colors ${
+              className={`font-mono text-xs sm:text-sm px-2 py-1 transition-colors whitespace-nowrap shrink-0 ${
                 active === id
                   ? "text-dacc-green"
                   : "text-dacc-muted hover:text-dacc-text"

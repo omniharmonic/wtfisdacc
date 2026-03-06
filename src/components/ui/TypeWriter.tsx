@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TypeWriterProps {
   text: string;
@@ -17,6 +17,8 @@ export default function TypeWriter({
 }: TypeWriterProps) {
   const [displayed, setDisplayed] = useState("");
   const [done, setDone] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     setDisplayed("");
@@ -29,11 +31,11 @@ export default function TypeWriter({
       } else {
         clearInterval(interval);
         setDone(true);
-        onComplete?.();
+        onCompleteRef.current?.();
       }
     }, speed);
     return () => clearInterval(interval);
-  }, [text, speed, onComplete]);
+  }, [text, speed]);
 
   return (
     <span className={className}>

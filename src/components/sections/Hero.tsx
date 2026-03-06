@@ -28,22 +28,22 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center px-4">
         <GlitchText>
-          <h1 className="font-mono text-5xl sm:text-6xl md:text-7xl font-bold text-dacc-green text-glow-green">
+          <h1 className="font-mono text-4xl sm:text-6xl md:text-7xl font-bold text-dacc-green text-glow-green">
             WTF is d/acc?
           </h1>
         </GlitchText>
 
-        <div className="mt-6 h-8">
+        <div className="mt-6 min-h-[2rem] sm:min-h-[2rem]">
           <TypeWriter
             text="Decentralized. Democratic. Differential. Defensive."
             speed={40}
-            className="font-mono text-lg sm:text-xl text-dacc-muted"
+            className="font-mono text-sm sm:text-lg md:text-xl text-dacc-muted"
             onComplete={() => setShowTagline(true)}
           />
         </div>
 
         <div
-          className={`mt-10 flex flex-col sm:flex-row gap-4 justify-center transition-opacity duration-1000 ${
+          className={`mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center transition-opacity duration-1000 ${
             showTagline ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -52,6 +52,9 @@ export default function Hero() {
           </a>
           <a href="#analyzer" className="btn-secondary">
             Analyze a project
+          </a>
+          <a href="#map" className="btn-secondary">
+            Explore the map
           </a>
         </div>
       </div>

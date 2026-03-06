@@ -186,7 +186,7 @@ export default function Analyzer() {
           <span className="font-mono text-xs text-dacc-green tracking-widest uppercase">
             // The Analyzer
           </span>
-          <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4">
+          <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4">
             Is it <span className="text-dacc-green text-glow-green">d/acc</span>?
           </h2>
           <p className="font-sans text-dacc-muted mt-2">

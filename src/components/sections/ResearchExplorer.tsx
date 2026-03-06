@@ -74,7 +74,7 @@ export default function ResearchExplorer() {
           <span className="font-mono text-xs text-dacc-green tracking-widest uppercase">
             // The Research
           </span>
-          <h2 className="font-mono text-3xl sm:text-4xl font-bold text-dacc-text mt-4">
+          <h2 className="font-mono text-2xl sm:text-4xl font-bold text-dacc-text mt-4">
             The d/acc{" "}
             <span className="text-dacc-green text-glow-green">taxonomy</span>.
           </h2>
@@ -84,12 +84,12 @@ export default function ResearchExplorer() {
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center gap-1 mb-6">
+        <div className="flex justify-center gap-1 mb-6 overflow-x-auto scrollbar-hide">
           {(["sectors", "primitives", "projects"] as Tab[]).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`font-mono text-sm px-4 py-2 border transition-colors ${
+              className={`font-mono text-xs sm:text-sm px-3 sm:px-4 py-2 border transition-colors whitespace-nowrap shrink-0 ${
                 tab === t
                   ? "bg-dacc-green/10 border-dacc-green/40 text-dacc-green"
                   : "border-dacc-surface text-dacc-muted hover:text-dacc-text hover:border-dacc-green/20"
