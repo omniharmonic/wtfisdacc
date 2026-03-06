@@ -58,16 +58,24 @@ export default function HomeClient() {
       <footer className="py-8 px-4 border-t border-dacc-green/10">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-mono text-xs text-dacc-muted">
-            WTF is d/acc? — An{" "}
+            Built by{" "}
             <a
-              href="https://opencivics.co"
+              href="https://x.com/omniharmonic"
               className="text-dacc-green hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open Civics
+              @omniharmonic
             </a>{" "}
-            project
+            for{" "}
+            <a
+              href="https://gitcoin.co"
+              className="text-dacc-green hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              gitcoin.co
+            </a>
           </span>
           <span className="font-mono text-xs text-dacc-muted">
             Inspired by{" "}
