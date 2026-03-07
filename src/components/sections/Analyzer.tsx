@@ -38,7 +38,23 @@ export default function Analyzer() {
   const { messages, status, sendMessage } = useChat({
     transport,
     onError: (error) => {
-      setErrorMessage(error.message || "[SYSTEM ERROR] Analysis failed.");
+      const msg = error.message || "";
+      // Parse JSON error bodies from API
+      try {
+        const parsed = JSON.parse(msg);
+        if (parsed.needsTextInput) {
+          setTextFallback(true);
+          setErrorMessage(parsed.error || "[WARN] Could not reach URL. Describe the project below.");
+          return;
+        }
+        if (parsed.error) {
+          setErrorMessage(parsed.error);
+          return;
+        }
+      } catch {
+        // Not JSON
+      }
+      setErrorMessage("[SYSTEM ERROR] Analysis failed. Try again or paste a description.");
     },
   });
 
@@ -289,6 +305,8 @@ export default function Analyzer() {
                   <div key={msg.id} className="text-sm whitespace-pre-wrap">
                     {msg.parts?.map((part, i) => {
                       if (part.type === "text") {
+                        // Skip raw JSON error bodies that leak into messages
+                        if (part.text.startsWith("{") && part.text.includes('"error"')) return null;
                         return (
                           <span key={i}>
                             {part.text.split(/(\[.*?\])/).map((segment, j) =>

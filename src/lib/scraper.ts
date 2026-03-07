@@ -7,17 +7,24 @@ export interface ScrapeResult {
 }
 
 export async function scrapeUrl(url: string): Promise<string> {
-  try {
-    // GitHub repos get special treatment via API
-    if (url.includes("github.com")) {
-      return await scrapeGitHub(url);
-    }
+  // GitHub repos get special treatment via API
+  if (url.includes("github.com")) {
+    return await scrapeGitHub(url);
+  }
 
+  // Try Jina Reader first, fall back to direct fetch
+  try {
     return await scrapeViaJina(url);
-  } catch (error) {
-    console.error("Scraping error:", error);
+  } catch (jinaError) {
+    console.warn("Jina Reader failed, trying direct fetch:", jinaError);
+  }
+
+  try {
+    return await scrapeDirectFetch(url);
+  } catch (directError) {
+    console.error("Both scrapers failed:", directError);
     throw new Error(
-      `Could not extract content from URL. Error: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Could not extract content from URL. Error: ${directError instanceof Error ? directError.message : "Unknown error"}`
     );
   }
 }
@@ -81,6 +88,42 @@ async function scrapeViaJina(url: string): Promise<string> {
 
   const markdown = await response.text();
   return sanitizeContent(markdown);
+}
+
+// Direct fetch fallback — works for sites that don't block serverless IPs
+async function scrapeDirectFetch(url: string): Promise<string> {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT),
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; WTFisDACCBot/1.0)",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const html = await response.text();
+  // Simple HTML-to-text extraction without cheerio
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"');
+
+  // Extract title from HTML
+  const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
+  const title = titleMatch ? titleMatch[1].trim() : "";
+
+  const parts = [];
+  if (title) parts.push(`Title: ${title}`);
+  parts.push(text);
+
+  return sanitizeContent(parts.join("\n"));
 }
 
 export async function scrapeUrlWithLogo(url: string): Promise<ScrapeResult> {
