@@ -16,6 +16,7 @@ interface ReportCardProps {
     entityName: string;
     entityType: EntityType;
     quadrant: Quadrant;
+    sector?: string;
     scores: AnalysisScores;
     tier: Tier;
     redFlags: string[];
@@ -26,9 +27,10 @@ interface ReportCardProps {
     oneLiner: string;
   };
   analysisId?: string;
+  isRefined?: boolean;
 }
 
-export default function ReportCard({ result, analysisId }: ReportCardProps) {
+export default function ReportCard({ result, analysisId, isRefined }: ReportCardProps) {
   const { setPendingMapProject } = useMapContext();
 
   const isAligned = result.tier === "tier_1" || result.tier === "tier_2" || result.tier === "tier_3";
@@ -38,7 +40,7 @@ export default function ReportCard({ result, analysisId }: ReportCardProps) {
       name: result.entityName,
       oneLiner: result.oneLiner,
       quadrant: result.quadrant,
-      sector: "",
+      sector: result.sector || "",
       scores: result.scores,
     });
     const mapSection = document.getElementById("map");
@@ -64,9 +66,17 @@ export default function ReportCard({ result, analysisId }: ReportCardProps) {
             </h3>
             <p className="font-mono text-xs text-dacc-muted mt-1">
               {result.entityType} · {QUADRANT_LABELS[result.quadrant]}
+              {result.sector && <> · {result.sector}</>}
             </p>
           </div>
-          <TierBadge tier={result.tier} />
+          <div className="flex items-center gap-2">
+            {isRefined && (
+              <span className="font-mono text-[10px] px-2 py-0.5 border border-dacc-cyan/40 text-dacc-cyan bg-dacc-cyan/10 tracking-widest uppercase">
+                Refined
+              </span>
+            )}
+            <TierBadge tier={result.tier} />
+          </div>
         </div>
         <p className="font-sans text-sm text-dacc-muted mt-3 italic">
           &quot;{result.oneLiner}&quot;

@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import TerminalWindow from "@/components/ui/TerminalWindow";
 import ReportCard from "@/components/ui/ReportCard";
-import { isValidUrl } from "@/lib/utils";
+import { isValidUrl, hashUrl } from "@/lib/utils";
 import type { AnalysisScores, Tier, Quadrant, EntityType } from "@/lib/types";
 
 interface ToolCallResult {
   entityName: string;
   entityType: EntityType;
   quadrant: Quadrant;
+  sector: string;
   scores: AnalysisScores;
   tier: Tier;
   redFlags: string[];
@@ -35,11 +36,19 @@ export default function Analyzer() {
   const [errorMessage, setErrorMessage] = useState("");
   const outputRef = useRef<HTMLDivElement>(null);
 
+  // Refinement state
+  const [refinementUsed, setRefinementUsed] = useState(false);
+  const [isRefining, setIsRefining] = useState(false);
+  const [feedbackInput, setFeedbackInput] = useState("");
+  const [firstPassAnalysisText, setFirstPassAnalysisText] = useState("");
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [currentUrlHash, setCurrentUrlHash] = useState("");
+
+  // First pass chat
   const { messages, status, sendMessage } = useChat({
     transport,
     onError: (error) => {
       const msg = error.message || "";
-      // Parse JSON error bodies from API
       try {
         const parsed = JSON.parse(msg);
         if (parsed.needsTextInput) {
@@ -58,14 +67,35 @@ export default function Analyzer() {
     },
   });
 
-  const isStreaming = status === "streaming" || status === "submitted";
+  // Second chat for refinement
+  const refineTransport = useMemo(
+    () => new DefaultChatTransport({ api: "/api/analyze/refine" }),
+    []
+  );
+  const {
+    messages: refineMessages,
+    status: refineStatus,
+    sendMessage: sendRefineMessage,
+  } = useChat({
+    transport: refineTransport,
+    onError: () => {
+      setErrorMessage("[SYSTEM ERROR] Refinement failed. Try again.");
+      setIsRefining(false);
+    },
+  });
 
-  // Extract tool results from messages (AI SDK v6 format)
+  const isStreaming = status === "streaming" || status === "submitted";
+  const isRefineStreaming = refineStatus === "streaming" || refineStatus === "submitted";
+
+  // Extract tool results from first-pass messages + capture analysis text
   useEffect(() => {
+    let analysisText = "";
     for (const msg of messages) {
-      if (msg.parts) {
+      if (msg.role === "assistant" && msg.parts) {
         for (const part of msg.parts) {
-          // AI SDK v6: tool parts are typed as "tool-{toolName}"
+          if (part.type === "text") {
+            analysisText += part.text;
+          }
           if (part.type === "tool-score_project") {
             const toolPart = part as unknown as {
               type: string;
@@ -87,14 +117,47 @@ export default function Analyzer() {
         }
       }
     }
+    if (analysisText) {
+      setFirstPassAnalysisText(analysisText);
+    }
   }, [messages]);
+
+  // Extract tool results from refine messages
+  useEffect(() => {
+    for (const msg of refineMessages) {
+      if (msg.parts) {
+        for (const part of msg.parts) {
+          if (part.type === "tool-score_project") {
+            const toolPart = part as unknown as {
+              type: string;
+              state: string;
+              input?: ToolCallResult;
+              output?: ToolCallResult;
+            };
+            let result: ToolCallResult | null = null;
+            if (toolPart.state === "output-available" && toolPart.output) {
+              result = toolPart.output;
+            } else if (toolPart.state === "input-available" && toolPart.input) {
+              result = toolPart.input;
+            }
+            if (result) {
+              setToolResult(result);
+              setAnalysisComplete(true);
+              setRefinementUsed(true);
+              setIsRefining(false);
+            }
+          }
+        }
+      }
+    }
+  }, [refineMessages]);
 
   // Auto-scroll
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, refineMessages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +186,10 @@ export default function Analyzer() {
       return;
     }
 
-    // Pre-check: cache and rate limit (HEAD-like check to avoid double analysis)
+    setCurrentUrl(url);
+    setCurrentUrlHash(hashUrl(url));
+
+    // Pre-check: cache and rate limit
     try {
       const res = await fetch("/api/analyze/check", {
         method: "POST",
@@ -147,6 +213,7 @@ export default function Analyzer() {
             entityName: data.analysis.entity_name,
             entityType: data.analysis.entity_type,
             quadrant: data.analysis.quadrant,
+            sector: data.analysis.sector || "",
             scores: {
               defensive: data.analysis.score_defensive,
               decentralization: data.analysis.score_decentralization,
@@ -161,6 +228,7 @@ export default function Analyzer() {
             waysMoreDacc: data.analysis.ways_more_dacc || [],
             oneLiner: data.analysis.one_liner || "",
           });
+          setFirstPassAnalysisText(data.analysis.analysis_markdown || "");
           setAnalysisComplete(true);
           return;
         }
@@ -178,7 +246,6 @@ export default function Analyzer() {
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Analysis failed";
-      // Try to parse JSON error from API response
       try {
         const parsed = JSON.parse(msg);
         if (parsed.needsTextInput) {
@@ -191,7 +258,7 @@ export default function Analyzer() {
           return;
         }
       } catch {
-        // Not JSON — handle as plain string
+        // Not JSON
       }
       if (msg.includes("429")) {
         setErrorMessage("[RATE LIMIT] Whoa, you're accelerating too fast! Take a breather and try again in a few minutes.");
@@ -202,6 +269,33 @@ export default function Analyzer() {
     }
   };
 
+  const handleRefineSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackInput.trim() || !toolResult) return;
+
+    setIsRefining(true);
+    setAnalysisComplete(false);
+    setErrorMessage("");
+
+    try {
+      await sendRefineMessage({
+        text: feedbackInput,
+      }, {
+        body: {
+          url: currentUrl,
+          urlHash: currentUrlHash,
+          previousAnalysis: firstPassAnalysisText,
+          previousScores: toolResult.scores,
+          feedback: feedbackInput.trim(),
+        },
+      });
+    } catch {
+      setErrorMessage("[SYSTEM ERROR] Refinement failed. Try again.");
+      setIsRefining(false);
+      setAnalysisComplete(true);
+    }
+  };
+
   const reset = () => {
     setInput("");
     setTextInput("");
@@ -209,7 +303,45 @@ export default function Analyzer() {
     setAnalysisComplete(false);
     setToolResult(null);
     setErrorMessage("");
+    setRefinementUsed(false);
+    setIsRefining(false);
+    setFeedbackInput("");
+    setFirstPassAnalysisText("");
+    setCurrentUrl("");
+    setCurrentUrlHash("");
   };
+
+  // Render streaming messages from either first pass or refine pass
+  const renderStreamingMessages = (
+    msgs: typeof messages,
+  ) =>
+    msgs
+      .filter((m) => m.role === "assistant")
+      .map((msg) => (
+        <div key={msg.id} className="text-sm whitespace-pre-wrap">
+          {msg.parts?.map((part, i) => {
+            if (part.type === "text") {
+              if (part.text.startsWith("{") && part.text.includes('"error"')) return null;
+              return (
+                <span key={i}>
+                  {part.text.split(/(\[.*?\])/).map((segment, j) =>
+                    segment.match(/^\[.*\]$/) ? (
+                      <span key={j} className="text-dacc-green font-bold">
+                        {segment}
+                      </span>
+                    ) : (
+                      <span key={j} className="text-dacc-text">
+                        {segment}
+                      </span>
+                    )
+                  )}
+                </span>
+              );
+            }
+            return null;
+          })}
+        </div>
+      ));
 
   return (
     <section id="analyzer" className="py-16 sm:py-24 px-4">
@@ -229,7 +361,32 @@ export default function Analyzer() {
         {/* Report Card view */}
         {analysisComplete && toolResult && (
           <div className="mb-8">
-            <ReportCard result={toolResult} />
+            <ReportCard result={toolResult} isRefined={refinementUsed} />
+
+            {/* Feedback input — only shows once, before refinement */}
+            {!refinementUsed && (
+              <form onSubmit={handleRefineSubmit} className="mt-4">
+                <div className="border border-dacc-green/20 bg-dacc-surface/30 p-4">
+                  <label className="font-mono text-xs text-dacc-cyan block mb-2">
+                    CORRECTIONS / ADDITIONAL CONTEXT
+                  </label>
+                  <textarea
+                    value={feedbackInput}
+                    onChange={(e) => setFeedbackInput(e.target.value)}
+                    placeholder="Got insider knowledge? Tell us what we got wrong or missed..."
+                    className="w-full h-24 bg-dacc-bg border border-dacc-green/10 p-3 text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50 outline-none resize-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!feedbackInput.trim()}
+                    className="btn-primary mt-2 w-full disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    [RE-ANALYZE WITH CORRECTIONS]
+                  </button>
+                </div>
+              </form>
+            )}
+
             <button
               onClick={reset}
               className="btn-secondary mt-4 w-full"
@@ -241,51 +398,55 @@ export default function Analyzer() {
 
         {/* Terminal view */}
         {!analysisComplete && (
-          <TerminalWindow title="d/acc diagnostic v1.0">
-            {/* Input */}
-            <form onSubmit={handleSubmit} className="mb-4">
-              {!textFallback ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-dacc-green shrink-0">is_it_dacc?</span>
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="paste a link >"
-                    className="flex-1 bg-transparent border-none outline-none text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50"
-                    disabled={isStreaming}
-                  />
-                  {!isStreaming && (
+          <TerminalWindow
+            title={isRefining ? "d/acc diagnostic v1.0 — refinement" : "d/acc diagnostic v1.0"}
+          >
+            {/* Input — only show when not refining */}
+            {!isRefining && (
+              <form onSubmit={handleSubmit} className="mb-4">
+                {!textFallback ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-dacc-green shrink-0">is_it_dacc?</span>
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="paste a link >"
+                      className="flex-1 bg-transparent border-none outline-none text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50"
+                      disabled={isStreaming}
+                    />
+                    {!isStreaming && (
+                      <button
+                        type="submit"
+                        className="text-dacc-green hover:text-dacc-green/80 font-mono text-sm"
+                      >
+                        [SCAN]
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-dacc-yellow text-sm mb-2">
+                      {errorMessage}
+                    </p>
+                    <textarea
+                      value={textInput}
+                      onChange={(e) => setTextInput(e.target.value)}
+                      placeholder="Describe the project here..."
+                      className="w-full h-32 bg-dacc-surface/50 border border-dacc-green/20 p-3 text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50 outline-none resize-none"
+                      disabled={isStreaming}
+                    />
                     <button
                       type="submit"
-                      className="text-dacc-green hover:text-dacc-green/80 font-mono text-sm"
+                      className="btn-primary mt-2 w-full"
+                      disabled={isStreaming}
                     >
-                      [SCAN]
+                      [ANALYZE TEXT]
                     </button>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <p className="text-dacc-yellow text-sm mb-2">
-                    {errorMessage}
-                  </p>
-                  <textarea
-                    value={textInput}
-                    onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Describe the project here..."
-                    className="w-full h-32 bg-dacc-surface/50 border border-dacc-green/20 p-3 text-dacc-text font-mono text-sm placeholder:text-dacc-muted/50 outline-none resize-none"
-                    disabled={isStreaming}
-                  />
-                  <button
-                    type="submit"
-                    className="btn-primary mt-2 w-full"
-                    disabled={isStreaming}
-                  >
-                    [ANALYZE TEXT]
-                  </button>
-                </div>
-              )}
-            </form>
+                  </div>
+                )}
+              </form>
+            )}
 
             {/* Error display */}
             {errorMessage && !textFallback && (
@@ -299,35 +460,10 @@ export default function Analyzer() {
               ref={outputRef}
               className="max-h-96 overflow-y-auto space-y-2"
             >
-              {messages
-                .filter((m) => m.role === "assistant")
-                .map((msg) => (
-                  <div key={msg.id} className="text-sm whitespace-pre-wrap">
-                    {msg.parts?.map((part, i) => {
-                      if (part.type === "text") {
-                        // Skip raw JSON error bodies that leak into messages
-                        if (part.text.startsWith("{") && part.text.includes('"error"')) return null;
-                        return (
-                          <span key={i}>
-                            {part.text.split(/(\[.*?\])/).map((segment, j) =>
-                              segment.match(/^\[.*\]$/) ? (
-                                <span key={j} className="text-dacc-green font-bold">
-                                  {segment}
-                                </span>
-                              ) : (
-                                <span key={j} className="text-dacc-text">
-                                  {segment}
-                                </span>
-                              )
-                            )}
-                          </span>
-                        );
-                      }
-                      return null;
-                    })}
-                  </div>
-                ))}
-              {isStreaming && (
+              {isRefining
+                ? renderStreamingMessages(refineMessages)
+                : renderStreamingMessages(messages)}
+              {(isStreaming || isRefineStreaming) && (
                 <span className="text-dacc-green animate-blink">▌</span>
               )}
             </div>

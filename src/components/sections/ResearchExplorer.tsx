@@ -92,14 +92,16 @@ export default function ResearchExplorer() {
   const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
   const [analyzedProjects, setAnalyzedProjects] = useState<UnifiedProject[]>([]);
 
-  // Fetch analyzed projects from Supabase
+  // Fetch analyzed projects from Supabase + subscribe to new ones
   useEffect(() => {
     const client = getAnonClient();
     if (!client) return;
 
+    const analysisFields = "entity_name, entity_type, sector, quadrant, score_defensive, score_decentralization, score_democratic, score_acceleration, tier, one_liner, url, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc";
+
     client
       .from("analyses")
-      .select("entity_name, entity_type, sector, quadrant, score_defensive, score_decentralization, score_democratic, score_acceleration, tier, one_liner, url, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .select(analysisFields)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         if (data) {
@@ -116,6 +118,31 @@ export default function ResearchExplorer() {
           setAnalyzedProjects(unique.map(analysisToUnified));
         }
       });
+
+    // Subscribe to new analyses so projects appear in the list immediately
+    const channel = client
+      .channel("analyses_changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "analyses" },
+        (payload) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const newRow = payload.new as any;
+          const newProject = analysisToUnified(newRow);
+          setAnalyzedProjects((prev) => {
+            // Deduplicate: remove any existing entry with the same name
+            const filtered = prev.filter(
+              (p) => p.name.toLowerCase() !== newProject.name.toLowerCase()
+            );
+            return [newProject, ...filtered];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
   }, []);
 
   const filteredSectors = useMemo(

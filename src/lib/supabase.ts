@@ -127,6 +127,60 @@ export async function saveMapPin(pin: Record<string, unknown>) {
   return data;
 }
 
+export async function updateAnalysis(
+  urlHash: string,
+  updates: Record<string, unknown>
+) {
+  const client = getServiceClient();
+  if (!client) return null;
+
+  const { data, error } = await client
+    .from("analyses")
+    .update(updates)
+    .eq("url_hash", urlHash)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating analysis:", error);
+    return null;
+  }
+  return data;
+}
+
+export async function updateMapPin(
+  entityName: string,
+  updates: Record<string, unknown>
+) {
+  const client = getServiceClient();
+  if (!client) return null;
+
+  const { data: existing } = await client
+    .from("map_pins")
+    .select("id")
+    .eq("name", entityName)
+    .eq("source", "analyzer")
+    .maybeSingle();
+
+  if (!existing) {
+    // No existing pin — fall back to insert (handles tier upgrade case)
+    return saveMapPin({ name: entityName, source: "analyzer", ...updates });
+  }
+
+  const { data, error } = await client
+    .from("map_pins")
+    .update(updates)
+    .eq("id", existing.id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating map pin:", error);
+    return null;
+  }
+  return data;
+}
+
 export async function getAnalysisById(id: string) {
   const client = getServiceClient() || getAnonClient();
   if (!client) return null;

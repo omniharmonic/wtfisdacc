@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { getAnonClient } from "@/lib/supabase";
 import { useMapContext } from "@/lib/map-context";
 import { QUADRANT_COLORS, QUADRANT_LABELS } from "@/lib/types";
@@ -8,6 +8,7 @@ import type { Quadrant } from "@/lib/types";
 import MapPinMarker, { type MapPin } from "@/components/map/MapPinMarker";
 import MapPinDetail from "@/components/map/MapPinDetail";
 import MapPinForm from "@/components/map/MapPinForm";
+import { PROJECTS } from "@/lib/research-data";
 
 // Map dimensions — based on SVG viewBox
 const MAP_W = 3508;
@@ -55,6 +56,15 @@ export default function InteractiveMap() {
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
   const { pendingMapProject, clearPendingMapProject } = useMapContext();
+
+  // Static project lookup by lowercase name
+  const staticProjectLookup = useMemo(() => {
+    const map = new Map<string, typeof PROJECTS[number]>();
+    for (const proj of PROJECTS) {
+      map.set(proj.name.toLowerCase(), proj);
+    }
+    return map;
+  }, []);
 
   // Load pins from Supabase
   useEffect(() => {
@@ -374,6 +384,7 @@ export default function InteractiveMap() {
                   pin={selectedPin}
                   onClose={() => setSelectedPin(null)}
                   analysisData={selectedPinAnalysis}
+                  staticData={staticProjectLookup.get(selectedPin.name.toLowerCase())}
                 />
               </div>
             </div>
