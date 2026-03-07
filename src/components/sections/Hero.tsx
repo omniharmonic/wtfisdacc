@@ -43,7 +43,25 @@ export default function Hero() {
         </div>
 
         <div
-          className={`mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center transition-opacity duration-1000 ${
+          className={`mt-4 transition-opacity duration-1000 ${
+            showTagline ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <p className="font-mono text-xs text-dacc-muted">
+            Powered by{" "}
+            <a
+              href="https://gitcoin.co"
+              className="text-dacc-green hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Gitcoin
+            </a>
+          </p>
+        </div>
+
+        <div
+          className={`mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center transition-opacity duration-1000 ${
             showTagline ? "opacity-100" : "opacity-0"
           }`}
         >

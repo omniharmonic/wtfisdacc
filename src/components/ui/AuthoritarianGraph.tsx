@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
@@ -17,8 +17,29 @@ export default function AuthoritarianGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [canvasHeight, setCanvasHeight] = useState(450);
   const animProgress = useRef(0);
   const animId = useRef<number>(0);
+
+  // Responsive height based on container width
+  const updateHeight = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const w = el.offsetWidth;
+    // On narrow screens, use a wider aspect ratio (shorter height)
+    // On desktop, keep the tall 450px
+    if (w < 480) {
+      setCanvasHeight(Math.max(220, w * 0.6));
+    } else {
+      setCanvasHeight(450);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [updateHeight]);
 
   // Intersection Observer to trigger animation
   useEffect(() => {
@@ -48,8 +69,17 @@ export default function AuthoritarianGraph() {
     canvas.height = H * dpr;
     ctx.scale(dpr, dpr);
 
-    // Layout — taller graph, NOW at 30% to give future lines room
-    const pad = { top: 30, bottom: 40, left: 50, right: 120 }; // extra right padding for labels
+    // Responsive layout — scale padding and fonts based on width
+    const isMobile = W < 480;
+    const fontSize = isMobile ? 8 : 10;
+    const fontSizeBold = isMobile ? 9 : 11;
+    const labelFontSize = isMobile ? 9 : 11;
+    const pad = {
+      top: isMobile ? 20 : 30,
+      bottom: isMobile ? 30 : 40,
+      left: isMobile ? 30 : 50,
+      right: isMobile ? 80 : 120,
+    };
     const gW = W - pad.left - pad.right;
     const gH = H - pad.top - pad.bottom;
     const nowX = pad.left + gW * 0.3;
@@ -87,16 +117,16 @@ export default function AuthoritarianGraph() {
 
       // Axis labels
       ctx.fillStyle = "#9999AA";
-      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
       ctx.textAlign = "center";
-      ctx.fillText("PAST", pad.left + gW * 0.12, pad.top + gH + 25);
-      ctx.fillText("FUTURE", pad.left + gW * 0.75, pad.top + gH + 25);
+      ctx.fillText("PAST", pad.left + gW * 0.12, pad.top + gH + (isMobile ? 18 : 25));
+      ctx.fillText("FUTURE", pad.left + gW * 0.75, pad.top + gH + (isMobile ? 18 : 25));
 
       ctx.save();
-      ctx.translate(15, pad.top + gH / 2);
+      ctx.translate(isMobile ? 10 : 15, pad.top + gH / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = "center";
-      ctx.fillText("AUTHORITARIAN CONTROL", 0, 0);
+      ctx.fillText(isMobile ? "CONTROL" : "AUTHORITARIAN CONTROL", 0, 0);
       ctx.restore();
 
       // "NOW" marker
@@ -109,16 +139,16 @@ export default function AuthoritarianGraph() {
       ctx.setLineDash([]);
 
       ctx.fillStyle = "#E0E0E0";
-      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.font = `bold ${fontSizeBold}px "JetBrains Mono", monospace`;
       ctx.textAlign = "center";
-      ctx.fillText("NOW", nowX, pad.top + gH + 25);
+      ctx.fillText("NOW", nowX, pad.top + gH + (isMobile ? 18 : 25));
 
       // Animated progress
       const t = easeOutCubic(Math.min(animProgress.current, 1));
       const totalPoints = 100;
       const drawPoints = Math.floor(totalPoints * t);
 
-      // History line — ends at 70% of graph height (lower = more room for red to climb)
+      // History line
       const historyPoints: [number, number][] = [];
       for (let i = 0; i <= totalPoints; i++) {
         const frac = i / totalPoints;
@@ -131,7 +161,7 @@ export default function AuthoritarianGraph() {
       const histDraw = Math.min(drawPoints, totalPoints);
       if (histDraw > 1) {
         ctx.strokeStyle = "rgba(224, 224, 224, 0.5)";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = isMobile ? 1.5 : 2;
         ctx.beginPath();
         ctx.moveTo(historyPoints[0][0], historyPoints[0][1]);
         for (let i = 1; i <= histDraw; i++) {
@@ -150,7 +180,6 @@ export default function AuthoritarianGraph() {
       const futureT = easeOutCubic(Math.min(futureProgress, 1));
       const futureDraw = Math.floor(totalPoints * futureT);
 
-      // Store endpoint positions for labels
       let redEndY = nowY;
       let greenEndY = nowY;
       let endX = futureStart;
@@ -158,15 +187,14 @@ export default function AuthoritarianGraph() {
       if (futureDraw > 1) {
         // RED line — exponential hockey stick upward
         ctx.strokeStyle = "#FF4444";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = isMobile ? 2 : 3;
         ctx.shadowColor = "#FF4444";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = isMobile ? 6 : 10;
         ctx.beginPath();
         ctx.moveTo(futureStart, nowY);
         for (let i = 1; i <= futureDraw; i++) {
           const frac = i / totalPoints;
           const x = futureStart + futureW * frac;
-          // Goes from nowY up to near top of graph
           const rise = 0.65 * expCurve(frac);
           const y = Math.max(pad.top + gH * 0.03, nowY - rise * gH);
           ctx.lineTo(x, y);
@@ -175,11 +203,11 @@ export default function AuthoritarianGraph() {
         ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // GREEN line — steady decline (less authoritarian)
+        // GREEN line — steady decline
         ctx.strokeStyle = "#00FF88";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = isMobile ? 2 : 3;
         ctx.shadowColor = "#00FF88";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = isMobile ? 6 : 10;
         ctx.beginPath();
         ctx.moveTo(futureStart, nowY);
         for (let i = 1; i <= futureDraw; i++) {
@@ -196,18 +224,16 @@ export default function AuthoritarianGraph() {
         // LABELS — positioned at the right endpoint of each line
         if (futureT > 0.5) {
           const labelAlpha = Math.min(1, (futureT - 0.5) * 2);
-          ctx.font = 'bold 11px "JetBrains Mono", monospace';
+          ctx.font = `bold ${labelFontSize}px "JetBrains Mono", monospace`;
           ctx.textAlign = "left";
 
-          // Red label — to the right of the line endpoint, vertically centered on it
           ctx.fillStyle = `rgba(255, 68, 68, ${labelAlpha})`;
-          ctx.fillText("AI +", endX + 10, redEndY - 6);
-          ctx.fillText("Surveillance", endX + 10, redEndY + 8);
+          ctx.fillText("AI +", endX + 8, redEndY - 6);
+          ctx.fillText("Surveillance", endX + 8, redEndY + 8);
 
-          // Green label — to the right of the line endpoint
           ctx.fillStyle = `rgba(0, 255, 136, ${labelAlpha})`;
-          ctx.fillText("d/acc", endX + 10, greenEndY - 6);
-          ctx.fillText("Defensive Tech", endX + 10, greenEndY + 8);
+          ctx.fillText("d/acc", endX + 8, greenEndY - 6);
+          ctx.fillText(isMobile ? "Defense" : "Defensive Tech", endX + 8, greenEndY + 8);
         }
       }
     }
@@ -224,14 +250,14 @@ export default function AuthoritarianGraph() {
     animate();
 
     return () => cancelAnimationFrame(animId.current);
-  }, [visible]);
+  }, [visible, canvasHeight]);
 
   return (
-    <div ref={containerRef} className="mt-12 border border-dacc-green/20 bg-dacc-surface/50 p-2">
+    <div ref={containerRef} className="mt-8 sm:mt-12 border border-dacc-green/20 bg-dacc-surface/50 p-1 sm:p-2">
       <canvas
         ref={canvasRef}
         className="w-full"
-        style={{ height: 450 }}
+        style={{ height: canvasHeight }}
       />
     </div>
   );

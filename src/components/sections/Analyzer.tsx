@@ -54,7 +54,7 @@ export default function Analyzer() {
       } catch {
         // Not JSON
       }
-      setErrorMessage("[SYSTEM ERROR] Analysis failed. Try again or paste a description.");
+      setErrorMessage("[SYSTEM ERROR] Looks like we're accelerating a bit too fast. Try again in a moment.");
     },
   });
 
@@ -194,9 +194,9 @@ export default function Analyzer() {
         // Not JSON — handle as plain string
       }
       if (msg.includes("429")) {
-        setErrorMessage("[RATE LIMIT] Too many requests. Please wait a few minutes.");
+        setErrorMessage("[RATE LIMIT] Whoa, you're accelerating too fast! Take a breather and try again in a few minutes.");
       } else {
-        setErrorMessage("[ERROR] Could not reach that URL. Try pasting a description instead.");
+        setErrorMessage("[BLOCKED] That site's defenses held up against our scanner. Describe the project instead.");
         setTextFallback(true);
       }
     }

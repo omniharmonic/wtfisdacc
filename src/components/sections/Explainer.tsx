@@ -389,9 +389,11 @@ export default function Explainer() {
             </div>
           ))}
         </motion.div>
-        <p className="font-mono text-xs text-dacc-muted text-center mt-4">
-          Explore the full interactive map below ↓
-        </p>
+        <div className="text-center mt-6">
+          <a href="#map" className="btn-secondary inline-block">
+            Explore the interactive map ↓
+          </a>
+        </div>
       </Section>
 
       {/* Section D: The Four D's */}

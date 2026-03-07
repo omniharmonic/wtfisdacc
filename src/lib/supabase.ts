@@ -100,6 +100,33 @@ export async function checkRateLimit(ipHash: string): Promise<{
   };
 }
 
+export async function saveMapPin(pin: Record<string, unknown>) {
+  const client = getServiceClient();
+  if (!client) return null;
+
+  // Check if a pin with this name already exists to avoid duplicates
+  const { data: existing } = await client
+    .from("map_pins")
+    .select("id")
+    .eq("name", pin.name)
+    .eq("source", "analyzer")
+    .maybeSingle();
+
+  if (existing) return existing;
+
+  const { data, error } = await client
+    .from("map_pins")
+    .insert(pin)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error saving map pin:", error);
+    return null;
+  }
+  return data;
+}
+
 export async function getAnalysisById(id: string) {
   const client = getServiceClient() || getAnonClient();
   if (!client) return null;

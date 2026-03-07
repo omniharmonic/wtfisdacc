@@ -3,8 +3,10 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { SECTORS, PRIMITIVES, PROJECTS } from "@/lib/research-data";
+import type { ResearchProject, ResearchPrimitive, ResearchSector } from "@/lib/research-data";
 import { QUADRANT_COLORS, QUADRANT_LABELS } from "@/lib/types";
 import type { Quadrant } from "@/lib/types";
+import ProjectDetailModal from "@/components/ui/ProjectDetailModal";
 
 type Tab = "sectors" | "primitives" | "projects";
 
@@ -32,10 +34,16 @@ function TierBadgeSmall({ tier }: { tier: string }) {
   );
 }
 
+type DetailItem =
+  | { type: "project"; data: ResearchProject }
+  | { type: "primitive"; data: ResearchPrimitive }
+  | { type: "sector"; data: ResearchSector };
+
 export default function ResearchExplorer() {
   const [tab, setTab] = useState<Tab>("sectors");
   const [quadrantFilter, setQuadrantFilter] = useState<Quadrant | "all">("all");
   const [search, setSearch] = useState("");
+  const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
 
   const filteredSectors = useMemo(
     () =>
@@ -161,10 +169,11 @@ export default function ResearchExplorer() {
             {filteredSectors.map((sector) => (
               <div
                 key={sector.name}
-                className="p-4 border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors"
+                className="p-4 border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors cursor-pointer"
                 style={{
                   borderColor: `${QUADRANT_COLORS[sector.quadrant]}20`,
                 }}
+                onClick={() => setSelectedDetail({ type: "sector", data: sector })}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div
@@ -208,7 +217,8 @@ export default function ResearchExplorer() {
             {filteredPrimitives.map((prim) => (
               <div
                 key={prim.name}
-                className="p-3 border border-dacc-surface bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors flex flex-col sm:flex-row sm:items-center gap-2"
+                className="p-3 border border-dacc-surface bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors flex flex-col sm:flex-row sm:items-center gap-2 cursor-pointer"
+                onClick={() => setSelectedDetail({ type: "primitive", data: prim })}
               >
                 <div className="flex items-center gap-2 sm:w-64 shrink-0">
                   <TierBadgeSmall tier={prim.tier} />
@@ -244,10 +254,11 @@ export default function ResearchExplorer() {
               {filteredProjects.map((proj) => (
                 <div
                   key={proj.name}
-                  className="p-3 border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors"
+                  className="p-3 border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors cursor-pointer"
                   style={{
                     borderColor: `${QUADRANT_COLORS[proj.quadrant]}15`,
                   }}
+                  onClick={() => setSelectedDetail({ type: "project", data: proj })}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <TierBadgeSmall tier={proj.tier} />
@@ -278,6 +289,13 @@ export default function ResearchExplorer() {
               ))}
             </div>
           </motion.div>
+        )}
+        {/* Detail modal */}
+        {selectedDetail && (
+          <ProjectDetailModal
+            item={selectedDetail}
+            onClose={() => setSelectedDetail(null)}
+          />
         )}
       </div>
     </section>

@@ -187,15 +187,22 @@ export default function ReportCard({ result, analysisId }: ReportCardProps) {
         )}
       </div>
 
-      {/* Add to map CTA */}
+      {/* Map CTA */}
       {isAligned && (
         <div className="px-6 pb-4">
-          <button
-            onClick={handleAddToMap}
-            className="btn-primary w-full"
+          <a
+            href="#map"
+            onClick={() => {
+              const mapSection = document.getElementById("map");
+              if (mapSection) mapSection.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="btn-primary w-full block text-center"
           >
-            ADD TO d/acc MAP
-          </button>
+            VIEW ON d/acc MAP
+          </a>
+          <p className="font-mono text-[10px] text-dacc-muted text-center mt-1">
+            Automatically added to the map
+          </p>
         </div>
       )}
 
