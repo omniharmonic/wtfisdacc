@@ -5,36 +5,34 @@ import type { Quadrant } from "@/lib/types";
 import type { MapPin } from "./MapPinMarker";
 import ProjectCardContent from "@/components/ui/ProjectCardContent";
 
+interface AnalysisData {
+  one_liner?: string;
+  entity_type?: string;
+  tier?: string;
+  score_defensive?: number;
+  score_decentralization?: number;
+  score_democratic?: number;
+  score_acceleration?: number;
+  red_flags?: string[];
+  green_flags?: string[];
+  ways_is_dacc?: string[];
+  ways_not_dacc?: string[];
+  ways_more_dacc?: string[];
+}
+
 interface MapPinDetailProps {
   pin: MapPin;
   onClose: () => void;
-  // Full analysis data if available (fetched from analyses table)
-  analysisData?: {
-    one_liner?: string;
-    red_flags?: string[];
-    green_flags?: string[];
-    ways_is_dacc?: string[];
-    ways_not_dacc?: string[];
-    ways_more_dacc?: string[];
-  } | null;
-}
-
-interface Scores {
-  defensive?: number;
-  decentralization?: number;
-  democratic?: number;
-  acceleration?: number;
+  analysisData?: AnalysisData | null;
 }
 
 export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetailProps) {
   const color = QUADRANT_COLORS[pin.quadrant] || "#00FF88";
-  const scores = (pin as unknown as { scores?: Scores }).scores;
-  const hasScores = scores && typeof scores === "object" && Object.keys(scores).length > 0;
 
-  // If this pin has analyzer scores, use the unified ProjectCardContent
-  if (hasScores && scores) {
-    const total = (scores.defensive || 0) + (scores.decentralization || 0) +
-                  (scores.democratic || 0) + (scores.acceleration || 0);
+  // If we have analysis data with scores, show the rich unified card
+  if (analysisData && typeof analysisData.score_defensive === "number") {
+    const total = (analysisData.score_defensive || 0) + (analysisData.score_decentralization || 0) +
+                  (analysisData.score_democratic || 0) + (analysisData.score_acceleration || 0);
 
     return (
       <div
@@ -44,26 +42,25 @@ export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetai
         <ProjectCardContent
           project={{
             name: pin.name,
-            oneLiner: pin.one_liner,
+            oneLiner: analysisData.one_liner || pin.one_liner,
             quadrant: pin.quadrant,
-            category: pin.sector || undefined,
-            tier: pin.tier || "not_aligned",
+            category: analysisData.entity_type || pin.sector || undefined,
+            tier: analysisData.tier || pin.tier || "not_aligned",
             totalScore: total,
             scores: {
-              defensive: scores.defensive || 0,
-              decentralization: scores.decentralization || 0,
-              democratic: scores.democratic || 0,
-              acceleration: scores.acceleration || 0,
+              defensive: analysisData.score_defensive || 0,
+              decentralization: analysisData.score_decentralization || 0,
+              democratic: analysisData.score_democratic || 0,
+              acceleration: analysisData.score_acceleration || 0,
             },
             websiteUrl: pin.website_url,
             imageUrl: pin.image_url,
             source: pin.source,
-            // Include analysis data if fetched
-            redFlags: analysisData?.red_flags,
-            greenFlags: analysisData?.green_flags,
-            waysIsDacc: analysisData?.ways_is_dacc,
-            waysNotDacc: analysisData?.ways_not_dacc,
-            waysMoreDacc: analysisData?.ways_more_dacc,
+            redFlags: analysisData.red_flags,
+            greenFlags: analysisData.green_flags,
+            waysIsDacc: analysisData.ways_is_dacc,
+            waysNotDacc: analysisData.ways_not_dacc,
+            waysMoreDacc: analysisData.ways_more_dacc,
           }}
           onClose={onClose}
         />
@@ -71,7 +68,7 @@ export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetai
     );
   }
 
-  // Simple card for manual pins without analyzer data
+  // Simple card for manual pins without analysis data
   return (
     <div
       className="w-80 sm:w-96 border bg-dacc-bg/95 backdrop-blur-sm"

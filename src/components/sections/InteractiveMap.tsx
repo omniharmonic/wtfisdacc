@@ -31,6 +31,12 @@ function randomInRegion(quadrant: Quadrant): { x: number; y: number } {
 
 interface AnalysisData {
   one_liner?: string;
+  entity_type?: string;
+  tier?: string;
+  score_defensive?: number;
+  score_decentralization?: number;
+  score_democratic?: number;
+  score_acceleration?: number;
   red_flags?: string[];
   green_flags?: string[];
   ways_is_dacc?: string[];
@@ -80,9 +86,9 @@ export default function InteractiveMap() {
     };
   }, []);
 
-  // Fetch analysis data when an analyzer pin is selected
+  // Fetch analysis data when any pin is selected (matches by name)
   useEffect(() => {
-    if (!selectedPin || selectedPin.source !== "analyzer") {
+    if (!selectedPin) {
       setSelectedPinAnalysis(null);
       return;
     }
@@ -92,7 +98,7 @@ export default function InteractiveMap() {
 
     client
       .from("analyses")
-      .select("one_liner, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .select("one_liner, entity_type, tier, score_defensive, score_decentralization, score_democratic, score_acceleration, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
       .eq("entity_name", selectedPin.name)
       .order("created_at", { ascending: false })
       .limit(1)
