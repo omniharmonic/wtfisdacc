@@ -104,7 +104,7 @@ export async function saveMapPin(pin: Record<string, unknown>) {
   const client = getServiceClient();
   if (!client) return null;
 
-  // Check if a pin with this name already exists to avoid duplicates
+  // Check if a pin with this name already exists
   const { data: existing } = await client
     .from("map_pins")
     .select("id")
@@ -112,7 +112,22 @@ export async function saveMapPin(pin: Record<string, unknown>) {
     .eq("source", "analyzer")
     .maybeSingle();
 
-  if (existing) return existing;
+  if (existing) {
+    // Update existing pin to keep it in sync with the latest analysis
+    const { x: _x, y: _y, ...updatableFields } = pin;
+    const { data, error } = await client
+      .from("map_pins")
+      .update(updatableFields)
+      .eq("id", existing.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating existing map pin:", error);
+      return existing;
+    }
+    return data;
+  }
 
   const { data, error } = await client
     .from("map_pins")
