@@ -29,9 +29,19 @@ function randomInRegion(quadrant: Quadrant): { x: number; y: number } {
   };
 }
 
+interface AnalysisData {
+  one_liner?: string;
+  red_flags?: string[];
+  green_flags?: string[];
+  ways_is_dacc?: string[];
+  ways_not_dacc?: string[];
+  ways_more_dacc?: string[];
+}
+
 export default function InteractiveMap() {
   const [pins, setPins] = useState<MapPin[]>([]);
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null);
+  const [selectedPinAnalysis, setSelectedPinAnalysis] = useState<AnalysisData | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: MAP_W, h: MAP_H });
   const svgRef = useRef<SVGSVGElement>(null);
@@ -69,6 +79,28 @@ export default function InteractiveMap() {
       client.removeChannel(channel);
     };
   }, []);
+
+  // Fetch analysis data when an analyzer pin is selected
+  useEffect(() => {
+    if (!selectedPin || selectedPin.source !== "analyzer") {
+      setSelectedPinAnalysis(null);
+      return;
+    }
+
+    const client = getAnonClient();
+    if (!client) return;
+
+    client
+      .from("analyses")
+      .select("one_liner, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .eq("entity_name", selectedPin.name)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        setSelectedPinAnalysis(data as AnalysisData | null);
+      });
+  }, [selectedPin]);
 
   // Handle pending project from analyzer
   useEffect(() => {
@@ -334,6 +366,7 @@ export default function InteractiveMap() {
                 <MapPinDetail
                   pin={selectedPin}
                   onClose={() => setSelectedPin(null)}
+                  analysisData={selectedPinAnalysis}
                 />
               </div>
             </div>

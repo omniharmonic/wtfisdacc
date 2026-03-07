@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SECTORS, PRIMITIVES, PROJECTS } from "@/lib/research-data";
-import type { ResearchProject, ResearchPrimitive, ResearchSector } from "@/lib/research-data";
+import type { ResearchPrimitive, ResearchSector } from "@/lib/research-data";
 import { QUADRANT_COLORS, QUADRANT_LABELS } from "@/lib/types";
 import type { Quadrant } from "@/lib/types";
+import { getAnonClient } from "@/lib/supabase";
 import ProjectDetailModal from "@/components/ui/ProjectDetailModal";
+import type { DetailItem } from "@/components/ui/ProjectDetailModal";
+import type { UnifiedProject } from "@/components/ui/ProjectCardContent";
 
 type Tab = "sectors" | "primitives" | "projects";
 
@@ -23,27 +26,97 @@ function TierBadgeSmall({ tier }: { tier: string }) {
     "Tier 1": "#00FF88",
     "Tier 2": "#00D4FF",
     "Tier 3": "#FFD93D",
+    tier_1: "#00FF88",
+    tier_2: "#00D4FF",
+    tier_3: "#FFD93D",
   };
+  const label = tier.startsWith("tier_") ? tier.replace("tier_", "Tier ") : tier;
   return (
     <span
       className="font-mono text-[10px] px-1.5 py-0.5 border"
       style={{ color: colors[tier] || "#9999AA", borderColor: `${colors[tier] || "#9999AA"}40` }}
     >
-      {tier}
+      {label}
     </span>
   );
 }
 
-type DetailItem =
-  | { type: "project"; data: ResearchProject }
-  | { type: "primitive"; data: ResearchPrimitive }
-  | { type: "sector"; data: ResearchSector };
+// Convert static ResearchProject to UnifiedProject
+function staticToUnified(proj: typeof PROJECTS[number]): UnifiedProject {
+  return {
+    name: proj.name,
+    description: proj.description,
+    quadrant: proj.quadrant,
+    category: proj.category,
+    tier: proj.tier,
+    totalScore: proj.daccScore,
+    stage: proj.stage,
+    differentiator: proj.differentiator,
+    hasToken: proj.hasToken,
+    tokenSymbol: proj.tokenSymbol,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function analysisToUnified(row: any): UnifiedProject {
+  const total = (row.score_defensive || 0) + (row.score_decentralization || 0) +
+                (row.score_democratic || 0) + (row.score_acceleration || 0);
+  return {
+    name: row.entity_name || "Unknown",
+    description: row.one_liner || undefined,
+    oneLiner: row.one_liner || undefined,
+    quadrant: row.quadrant || "digital_defense",
+    category: row.entity_type || undefined,
+    tier: row.tier || "not_aligned",
+    totalScore: total,
+    scores: {
+      defensive: row.score_defensive || 0,
+      decentralization: row.score_decentralization || 0,
+      democratic: row.score_democratic || 0,
+      acceleration: row.score_acceleration || 0,
+    },
+    websiteUrl: row.url || undefined,
+    redFlags: row.red_flags || [],
+    greenFlags: row.green_flags || [],
+    waysIsDacc: row.ways_is_dacc || [],
+    waysNotDacc: row.ways_not_dacc || [],
+    waysMoreDacc: row.ways_more_dacc || [],
+    source: "analyzer",
+  };
+}
 
 export default function ResearchExplorer() {
   const [tab, setTab] = useState<Tab>("sectors");
   const [quadrantFilter, setQuadrantFilter] = useState<Quadrant | "all">("all");
   const [search, setSearch] = useState("");
   const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
+  const [analyzedProjects, setAnalyzedProjects] = useState<UnifiedProject[]>([]);
+
+  // Fetch analyzed projects from Supabase
+  useEffect(() => {
+    const client = getAnonClient();
+    if (!client) return;
+
+    client
+      .from("analyses")
+      .select("entity_name, entity_type, quadrant, score_defensive, score_decentralization, score_democratic, score_acceleration, tier, one_liner, url, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const rows = data as any[];
+          // Deduplicate by name (keep most recent = first)
+          const seen = new Set<string>();
+          const unique = rows.filter((row) => {
+            const name = (row.entity_name || "").toLowerCase();
+            if (seen.has(name)) return false;
+            seen.add(name);
+            return true;
+          });
+          setAnalyzedProjects(unique.map(analysisToUnified));
+        }
+      });
+  }, []);
 
   const filteredSectors = useMemo(
     () =>
@@ -54,12 +127,23 @@ export default function ResearchExplorer() {
   );
 
   const filteredPrimitives = useMemo(
-    () => PRIMITIVES, // primitives don't have a quadrant directly, show all
+    () => PRIMITIVES,
     []
   );
 
+  // Merge static + analyzed projects, deduplicating by name
+  const allProjects = useMemo(() => {
+    const staticUnified = PROJECTS.map(staticToUnified);
+    const staticNames = new Set(staticUnified.map((p) => p.name.toLowerCase()));
+    // Add analyzed projects that aren't already in the static list
+    const newFromAnalyzer = analyzedProjects.filter(
+      (p) => !staticNames.has(p.name.toLowerCase())
+    );
+    return [...staticUnified, ...newFromAnalyzer];
+  }, [analyzedProjects]);
+
   const filteredProjects = useMemo(() => {
-    let p = PROJECTS;
+    let p = allProjects;
     if (quadrantFilter !== "all") {
       p = p.filter((proj) => proj.quadrant === quadrantFilter);
     }
@@ -68,12 +152,14 @@ export default function ResearchExplorer() {
       p = p.filter(
         (proj) =>
           proj.name.toLowerCase().includes(q) ||
-          proj.category.toLowerCase().includes(q) ||
-          proj.description.toLowerCase().includes(q)
+          (proj.category || "").toLowerCase().includes(q) ||
+          (proj.description || "").toLowerCase().includes(q)
       );
     }
     return p;
-  }, [quadrantFilter, search]);
+  }, [quadrantFilter, search, allProjects]);
+
+  const totalProjectCount = allProjects.length;
 
   return (
     <section id="research" className="py-16 sm:py-24 px-4">
@@ -87,7 +173,7 @@ export default function ResearchExplorer() {
             <span className="text-dacc-green text-glow-green">taxonomy</span>.
           </h2>
           <p className="font-sans text-dacc-muted mt-2 max-w-lg mx-auto">
-            {SECTORS.length} sectors, {PRIMITIVES.length} primitives, {PROJECTS.length}+ projects mapped across the d/acc landscape.
+            {SECTORS.length} sectors, {PRIMITIVES.length} primitives, {totalProjectCount}+ projects mapped across the d/acc landscape.
           </p>
         </div>
 
@@ -105,7 +191,7 @@ export default function ResearchExplorer() {
             >
               {t === "sectors" && `Sectors (${SECTORS.length})`}
               {t === "primitives" && `Primitives (${PRIMITIVES.length})`}
-              {t === "projects" && `Projects (${PROJECTS.length})`}
+              {t === "projects" && `Projects (${totalProjectCount})`}
             </button>
           ))}
         </div>
@@ -253,7 +339,7 @@ export default function ResearchExplorer() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {filteredProjects.map((proj) => (
                 <div
-                  key={proj.name}
+                  key={`${proj.name}-${proj.source || "static"}`}
                   className="p-3 border bg-dacc-surface/30 hover:bg-dacc-surface/50 transition-colors cursor-pointer"
                   style={{
                     borderColor: `${QUADRANT_COLORS[proj.quadrant]}15`,
@@ -270,19 +356,24 @@ export default function ResearchExplorer() {
                         ${proj.tokenSymbol}
                       </span>
                     )}
+                    {proj.source === "analyzer" && (
+                      <span className="font-mono text-[10px] text-dacc-green/50 ml-auto shrink-0">
+                        AI
+                      </span>
+                    )}
                   </div>
                   <div className="font-sans text-xs text-dacc-muted mb-2 line-clamp-2">
-                    {proj.description}
+                    {proj.oneLiner || proj.description}
                   </div>
                   <div className="flex items-center justify-between">
                     <span
                       className="font-mono text-[10px]"
                       style={{ color: QUADRANT_COLORS[proj.quadrant] }}
                     >
-                      {proj.category}
+                      {proj.category || QUADRANT_LABELS[proj.quadrant]}
                     </span>
                     <span className="font-mono text-[10px] text-dacc-green">
-                      {proj.daccScore}/100
+                      {proj.totalScore}/100
                     </span>
                   </div>
                 </div>

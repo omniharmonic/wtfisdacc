@@ -1,47 +1,17 @@
 "use client";
 
 import { QUADRANT_COLORS, QUADRANT_LABELS, TIER_COLORS } from "@/lib/types";
-import type { Quadrant } from "@/lib/types";
-import type { ResearchProject, ResearchPrimitive, ResearchSector } from "@/lib/research-data";
+import type { ResearchPrimitive, ResearchSector } from "@/lib/research-data";
+import ProjectCardContent, { type UnifiedProject } from "./ProjectCardContent";
 
-type DetailItem =
-  | { type: "project"; data: ResearchProject }
+export type DetailItem =
+  | { type: "project"; data: UnifiedProject }
   | { type: "primitive"; data: ResearchPrimitive }
   | { type: "sector"; data: ResearchSector };
 
 interface ProjectDetailModalProps {
   item: DetailItem;
   onClose: () => void;
-}
-
-function ScoreBar({ score, max, color }: { score: number; max: number; color: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-2 bg-dacc-surface rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${(score / max) * 100}%`, backgroundColor: color }}
-        />
-      </div>
-      <span className="font-mono text-xs text-dacc-text w-10 text-right">
-        {score}/{max}
-      </span>
-    </div>
-  );
-}
-
-function TierBadgeInline({ tier }: { tier: string }) {
-  const tierKey = tier.toLowerCase().replace(" ", "_") as keyof typeof TIER_COLORS;
-  const color = TIER_COLORS[tierKey] || "#9999AA";
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 font-mono text-xs font-bold border"
-      style={{ color, borderColor: `${color}60`, backgroundColor: `${color}10` }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
-      {tier}
-    </span>
-  );
 }
 
 export default function ProjectDetailModal({ item, onClose }: ProjectDetailModalProps) {
@@ -56,7 +26,9 @@ export default function ProjectDetailModal({ item, onClose }: ProjectDetailModal
         style={{ borderColor: getBorderColor(item) }}
         onClick={(e) => e.stopPropagation()}
       >
-        {item.type === "project" && <ProjectDetail data={item.data} onClose={onClose} />}
+        {item.type === "project" && (
+          <ProjectCardContent project={item.data} onClose={onClose} />
+        )}
         {item.type === "primitive" && <PrimitiveDetail data={item.data} onClose={onClose} />}
         {item.type === "sector" && <SectorDetail data={item.data} onClose={onClose} />}
       </div>
@@ -71,62 +43,22 @@ function getBorderColor(item: DetailItem): string {
   return `${TIER_COLORS[tierKey] || "#9999AA"}40`;
 }
 
-function ProjectDetail({ data, onClose }: { data: ResearchProject; onClose: () => void }) {
-  const quadrantColor = QUADRANT_COLORS[data.quadrant];
-  return (
-    <>
-      {/* Header */}
-      <div className="p-4 border-b border-dacc-green/10 bg-dacc-surface/30">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <TierBadgeInline tier={data.tier} />
-              {data.hasToken && data.tokenSymbol && (
-                <span className="font-mono text-[10px] text-dacc-cyan">${data.tokenSymbol}</span>
-              )}
-            </div>
-            <h3 className="font-mono text-lg font-bold text-dacc-text">{data.name}</h3>
-          </div>
-          <button onClick={onClose} className="font-mono text-xs text-dacc-muted hover:text-dacc-text shrink-0">
-            [x]
-          </button>
-        </div>
-        <p className="font-sans text-sm text-dacc-muted mt-2">{data.description}</p>
-      </div>
-
-      {/* Score */}
-      <div className="p-4 border-b border-dacc-green/10">
-        <div className="flex items-center justify-between mb-3">
-          <span className="font-mono text-xs text-dacc-muted">d/acc SCORE</span>
-          <span className="font-mono text-2xl font-bold text-dacc-green">{data.daccScore}<span className="text-sm text-dacc-muted">/100</span></span>
-        </div>
-        <ScoreBar score={data.daccScore} max={100} color="#00FF88" />
-      </div>
-
-      {/* Details grid */}
-      <div className="p-4 space-y-3">
-        <DetailRow label="Quadrant" value={QUADRANT_LABELS[data.quadrant]} color={quadrantColor} />
-        <DetailRow label="Sector" value={data.category} />
-        <DetailRow label="Stage" value={data.stage} />
-        {data.differentiator && (
-          <div>
-            <span className="font-mono text-[10px] text-dacc-muted block mb-1">DIFFERENTIATOR</span>
-            <p className="font-sans text-sm text-dacc-text">{data.differentiator}</p>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
 function PrimitiveDetail({ data, onClose }: { data: ResearchPrimitive; onClose: () => void }) {
+  const tierKey = data.tier.toLowerCase().replace(" ", "_") as keyof typeof TIER_COLORS;
+  const tierColor = TIER_COLORS[tierKey] || "#9999AA";
   return (
     <>
       <div className="p-4 border-b border-dacc-green/10 bg-dacc-surface/30">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <TierBadgeInline tier={data.tier} />
+              <span
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 font-mono text-xs font-bold border"
+                style={{ color: tierColor, borderColor: `${tierColor}60`, backgroundColor: `${tierColor}10` }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tierColor }} />
+                {data.tier}
+              </span>
               <span className="font-mono text-[10px] text-dacc-muted">{data.category}</span>
             </div>
             <h3 className="font-mono text-lg font-bold text-dacc-text">{data.name}</h3>
