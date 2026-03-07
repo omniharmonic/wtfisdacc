@@ -67,6 +67,15 @@ export default function HomeClient() {
             >
               @omniharmonic
             </a>{" "}
+            with research from{" "}
+            <a
+              href="https://x.com/carl_cervone"
+              className="text-dacc-green hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @carl_cervone
+            </a>{" "}
             for{" "}
             <a
               href="https://gitcoin.co"
