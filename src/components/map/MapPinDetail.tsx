@@ -8,6 +8,7 @@ import ProjectCardContent from "@/components/ui/ProjectCardContent";
 interface AnalysisData {
   one_liner?: string;
   entity_type?: string;
+  sector?: string;
   tier?: string;
   score_defensive?: number;
   score_decentralization?: number;
@@ -29,10 +30,28 @@ interface MapPinDetailProps {
 export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetailProps) {
   const color = QUADRANT_COLORS[pin.quadrant] || "#00FF88";
 
-  // If we have analysis data with scores, show the rich unified card
-  if (analysisData && typeof analysisData.score_defensive === "number") {
-    const total = (analysisData.score_defensive || 0) + (analysisData.score_decentralization || 0) +
-                  (analysisData.score_democratic || 0) + (analysisData.score_acceleration || 0);
+  // Build scores from pin data (primary) or analysisData (fallback)
+  const pinScores = pin.scores;
+  const hasScoresOnPin = pinScores && typeof pinScores.defensive === "number";
+  const hasScoresInAnalysis = analysisData && typeof analysisData.score_defensive === "number";
+
+  if (hasScoresOnPin || hasScoresInAnalysis) {
+    // Prefer pin.scores (already on the object), fall back to analysisData scores
+    const scores = hasScoresOnPin
+      ? {
+          defensive: pinScores!.defensive || 0,
+          decentralization: pinScores!.decentralization || 0,
+          democratic: pinScores!.democratic || 0,
+          acceleration: pinScores!.acceleration || 0,
+        }
+      : {
+          defensive: analysisData!.score_defensive || 0,
+          decentralization: analysisData!.score_decentralization || 0,
+          democratic: analysisData!.score_democratic || 0,
+          acceleration: analysisData!.score_acceleration || 0,
+        };
+
+    const total = scores.defensive + scores.decentralization + scores.democratic + scores.acceleration;
 
     return (
       <div
@@ -42,25 +61,20 @@ export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetai
         <ProjectCardContent
           project={{
             name: pin.name,
-            oneLiner: analysisData.one_liner || pin.one_liner,
+            oneLiner: analysisData?.one_liner || pin.one_liner,
             quadrant: pin.quadrant,
-            category: analysisData.entity_type || pin.sector || undefined,
-            tier: analysisData.tier || pin.tier || "not_aligned",
+            category: analysisData?.sector || analysisData?.entity_type || pin.sector || undefined,
+            tier: analysisData?.tier || pin.tier || "not_aligned",
             totalScore: total,
-            scores: {
-              defensive: analysisData.score_defensive || 0,
-              decentralization: analysisData.score_decentralization || 0,
-              democratic: analysisData.score_democratic || 0,
-              acceleration: analysisData.score_acceleration || 0,
-            },
+            scores,
             websiteUrl: pin.website_url,
             imageUrl: pin.image_url,
             source: pin.source,
-            redFlags: analysisData.red_flags,
-            greenFlags: analysisData.green_flags,
-            waysIsDacc: analysisData.ways_is_dacc,
-            waysNotDacc: analysisData.ways_not_dacc,
-            waysMoreDacc: analysisData.ways_more_dacc,
+            redFlags: analysisData?.red_flags,
+            greenFlags: analysisData?.green_flags,
+            waysIsDacc: analysisData?.ways_is_dacc,
+            waysNotDacc: analysisData?.ways_not_dacc,
+            waysMoreDacc: analysisData?.ways_more_dacc,
           }}
           onClose={onClose}
         />
@@ -68,7 +82,7 @@ export default function MapPinDetail({ pin, onClose, analysisData }: MapPinDetai
     );
   }
 
-  // Simple card for manual pins without analysis data
+  // Simple card for manual pins without any score data
   return (
     <div
       className="w-80 sm:w-96 border bg-dacc-bg/95 backdrop-blur-sm"

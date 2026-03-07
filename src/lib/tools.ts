@@ -14,6 +14,33 @@ const scoreSchema = jsonSchema({
       enum: ["physical_defense", "physical_coordination", "digital_defense", "digital_coordination"],
       description: "The primary quadrant this entity falls into",
     },
+    sector: {
+      type: "string",
+      enum: [
+        "Biodefense & Health Systems",
+        "Open Source Hardware & Silicon",
+        "Resilient Manufacturing",
+        "Decentralized Energy",
+        "Property Rights & Registries",
+        "Carbon & Environmental Markets",
+        "Civic Tech",
+        "Zero-Knowledge Systems",
+        "Privacy-Preserving Computation",
+        "Decentralized Identity & Attestation",
+        "Communication & Messaging",
+        "Formal Verification & Security",
+        "Data Availability & Storage",
+        "Democratic Funding Mechanisms",
+        "Governance Tooling",
+        "Decentralized Monetary Infrastructure",
+        "Oracle Networks",
+        "Cross-Chain Infrastructure",
+        "Streaming & Treasury",
+        "Ecosystem Connector",
+        "Secrets-as-a-Service",
+      ],
+      description: "The specific d/acc sector this entity belongs to. Choose the closest match.",
+    },
     scores: {
       type: "object",
       properties: {
@@ -37,7 +64,7 @@ const scoreSchema = jsonSchema({
     oneLiner: { type: "string", description: "One-sentence summary of the d/acc evaluation" },
   },
   required: [
-    "entityName", "entityType", "quadrant", "scores", "tier",
+    "entityName", "entityType", "quadrant", "sector", "scores", "tier",
     "redFlags", "greenFlags", "waysIsDacc", "waysNotDacc", "waysMoreDacc", "oneLiner",
   ],
 });

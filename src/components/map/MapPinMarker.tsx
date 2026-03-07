@@ -13,6 +13,12 @@ export interface MapPin {
   image_url?: string;
   website_url?: string;
   tier?: string;
+  scores?: {
+    defensive?: number;
+    decentralization?: number;
+    democratic?: number;
+    acceleration?: number;
+  };
   x: number;
   y: number;
   source?: string;

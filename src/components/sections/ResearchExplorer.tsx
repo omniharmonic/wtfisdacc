@@ -66,7 +66,7 @@ function analysisToUnified(row: any): UnifiedProject {
     description: row.one_liner || undefined,
     oneLiner: row.one_liner || undefined,
     quadrant: row.quadrant || "digital_defense",
-    category: row.entity_type || undefined,
+    category: row.sector || row.entity_type || undefined,
     tier: row.tier || "not_aligned",
     totalScore: total,
     scores: {
@@ -99,7 +99,7 @@ export default function ResearchExplorer() {
 
     client
       .from("analyses")
-      .select("entity_name, entity_type, quadrant, score_defensive, score_decentralization, score_democratic, score_acceleration, tier, one_liner, url, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .select("entity_name, entity_type, sector, quadrant, score_defensive, score_decentralization, score_democratic, score_acceleration, tier, one_liner, url, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         if (data) {

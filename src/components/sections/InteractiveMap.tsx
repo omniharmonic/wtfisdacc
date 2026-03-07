@@ -32,6 +32,7 @@ function randomInRegion(quadrant: Quadrant): { x: number; y: number } {
 interface AnalysisData {
   one_liner?: string;
   entity_type?: string;
+  sector?: string;
   tier?: string;
   score_defensive?: number;
   score_decentralization?: number;
@@ -98,7 +99,7 @@ export default function InteractiveMap() {
 
     client
       .from("analyses")
-      .select("one_liner, entity_type, tier, score_defensive, score_decentralization, score_democratic, score_acceleration, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
+      .select("one_liner, entity_type, sector, tier, score_defensive, score_decentralization, score_democratic, score_acceleration, red_flags, green_flags, ways_is_dacc, ways_not_dacc, ways_more_dacc")
       .eq("entity_name", selectedPin.name)
       .order("created_at", { ascending: false })
       .limit(1)

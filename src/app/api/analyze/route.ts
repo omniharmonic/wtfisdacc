@@ -98,6 +98,7 @@ export async function POST(req: Request) {
         const args = (toolCall as unknown as { input: Record<string, unknown> }).input;
         const scoresObj = args.scores as Record<string, number>;
         const quadrant = (args.quadrant as string) || "digital_defense";
+        const sector = (args.sector as string) || "";
         const entityName = (args.entityName as string) || "Unknown";
         const tier = (args.tier as string) || "not_aligned";
         const oneLiner = (args.oneLiner as string) || "";
@@ -111,6 +112,7 @@ export async function POST(req: Request) {
               entity_name: entityName,
               entity_type: (args.entityType as string) || "other",
               quadrant,
+              sector,
               score_defensive: scoresObj?.defensive || 0,
               score_decentralization: scoresObj?.decentralization || 0,
               score_democratic: scoresObj?.democratic || 0,
@@ -146,7 +148,7 @@ export async function POST(req: Request) {
               name: entityName,
               one_liner: oneLiner,
               quadrant,
-              sector: "",
+              sector,
               website_url: url || null,
               tier,
               scores: scoresObj || {},

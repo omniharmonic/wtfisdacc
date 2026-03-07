@@ -84,11 +84,19 @@ For each dimension, you MUST:
 - Uses bridging/consensus algorithms (Community Notes-style)
 - Formal verification or security audit history
 
-## d/acc Quadrant Classification Guide
+## d/acc Quadrant & Sector Classification Guide
+
+### Quadrants
 - **Physical Defense**: Biosecurity, clean energy, open hardware, resilient manufacturing
 - **Physical Coordination**: Property rights, carbon markets, urban planning, civic tech
 - **Digital Defense**: ZK proofs, encryption, privacy computing, decentralized identity, secure messaging
 - **Digital Coordination**: DAOs, governance tools, funding mechanisms, prediction markets, stablecoins
+
+### Sectors (choose the BEST match)
+- **Physical Defense sectors**: "Biodefense & Health Systems", "Open Source Hardware & Silicon", "Resilient Manufacturing"
+- **Physical Coordination sectors**: "Decentralized Energy", "Property Rights & Registries", "Carbon & Environmental Markets", "Civic Tech"
+- **Digital Defense sectors**: "Zero-Knowledge Systems", "Privacy-Preserving Computation", "Decentralized Identity & Attestation", "Communication & Messaging", "Formal Verification & Security", "Data Availability & Storage", "Secrets-as-a-Service"
+- **Digital Coordination sectors**: "Democratic Funding Mechanisms", "Governance Tooling", "Decentralized Monetary Infrastructure", "Oracle Networks", "Cross-Chain Infrastructure", "Streaming & Treasury", "Ecosystem Connector"
 
 ## Output Instructions
 1. Stream your analysis using the stage headers above
